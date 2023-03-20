@@ -5,4 +5,8 @@
     <RootNamespace>Server_cloudata</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BuisnessLogic\BuisnessLogic.csproj" />
+  </ItemGroup>
+
 </Project>

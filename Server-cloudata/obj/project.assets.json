@@ -1,11 +1,29 @@
 {
   "version": 3,
   "targets": {
-    "net5.0": {}
+    "net5.0": {
+      "BuisnessLogic/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/BuisnessLogic.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/BuisnessLogic.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "BuisnessLogic/1.0.0": {
+      "type": "project",
+      "path": "../BuisnessLogic/BuisnessLogic.csproj",
+      "msbuildProject": "../BuisnessLogic/BuisnessLogic.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net5.0": []
+    "net5.0": [
+      "BuisnessLogic >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\guyyo\\.nuget\\packages\\": {},
@@ -38,7 +56,11 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\guyyo\\source\\repos\\Server-cloudata\\BuisnessLogic\\BuisnessLogic.csproj": {
+              "projectPath": "C:\\Users\\guyyo\\source\\repos\\Server-cloudata\\BuisnessLogic\\BuisnessLogic.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -1,0 +1,6 @@
+C:\Users\guyyo\source\repos\Server-cloudata\BuisnessLogic\bin\Debug\BuisnessLogic.dll
+C:\Users\guyyo\source\repos\Server-cloudata\BuisnessLogic\bin\Debug\BuisnessLogic.pdb
+C:\Users\guyyo\source\repos\Server-cloudata\BuisnessLogic\obj\Debug\BuisnessLogic.csproj.AssemblyReference.cache
+C:\Users\guyyo\source\repos\Server-cloudata\BuisnessLogic\obj\Debug\BuisnessLogic.csproj.CoreCompileInputs.cache
+C:\Users\guyyo\source\repos\Server-cloudata\BuisnessLogic\obj\Debug\BuisnessLogic.dll
+C:\Users\guyyo\source\repos\Server-cloudata\BuisnessLogic\obj\Debug\BuisnessLogic.pdb
