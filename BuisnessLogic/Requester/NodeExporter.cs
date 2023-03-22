@@ -23,7 +23,6 @@ namespace BuisnessLogic.Requester
         {
             try
             {
-                long s = 1679320085;
                 string url = $@"{URLBase}{Query_range(CpuUsageQuery())}&start={1679312407/*ConvertToUnix(start)*/}&end={1679320085/*ConvertToUnix(end)*/}&step={steps}";
 
                 return RequestClient.GetAsync(url).Result;
@@ -31,12 +30,13 @@ namespace BuisnessLogic.Requester
             {
                 throw e;
             }
-                 //(node_cpu_seconds_total{mode!=%22idle%22,job=%22DEMO-VMs%22}[5m])
-                 //&start=1679312407&end=1679320085&step=15s
         }
 
         public override string GetMemory()
         {
+            //todo
+            // http://20.85.68.63:9090/api/v1/query_range?query=node_memory_MemTotal_bytes{instance=%2210.0.0.4:9100%22}-node_memory_MemFree_bytes{instance=%2210.0.0.4:9100%22}-node_memory_Buffers_bytes{instance=%2210.0.0.4:9100%22}-node_memory_Cached_bytes{instance=%2210.0.0.4:9100%22}&start=1679340587&end=1679347981&step=15s
+            string url = $@"{URLBase}";
             throw new NotImplementedException();
         }
     }
