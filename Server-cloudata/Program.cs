@@ -14,15 +14,16 @@ namespace Server_cloudata
     {
         public static void Main(string[] args)
         {
-            new NodeExporter().GetCpu();
-           // CreateHostBuilder(args).Build().Run();
+            //new NodeExporter().GetCpu();
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                    .UseUrls("http://localhost:3679");
                 });
     }
 }
