@@ -14,7 +14,9 @@ namespace Server_cloudata
     {
         public static void Main(string[] args)
         {
-            //new NodeExporter().GetCpu();
+            //NodeExporter nodeExporter = new NodeExporter();
+            //string cpuResults = nodeExporter.GetCpu();
+            //string memoryResults = nodeExporter.GetMemory();
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -22,8 +24,7 @@ namespace Server_cloudata
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>()
-                    .UseUrls("http://localhost:3679");
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }
