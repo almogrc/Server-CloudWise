@@ -1,3 +1,4 @@
+using BuisnessLogic.Requester;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,9 @@ namespace Server_cloudata
     {
         public static void Main(string[] args)
         {
+            //NodeExporter nodeExporter = new NodeExporter();
+            //string cpuResults = nodeExporter.GetCpu();
+            //string memoryResults = nodeExporter.GetMemory();
             CreateHostBuilder(args).Build().Run();
         }
 
