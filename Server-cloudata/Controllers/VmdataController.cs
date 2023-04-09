@@ -8,7 +8,7 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class VmdataController : ControllerBase
     {
-        AgentApi agent = new NodeExporter();
+        ProcessExporter agent = new ProcessExporter();
         // GET: api/TodoItems
 
         [HttpGet("cpu")]

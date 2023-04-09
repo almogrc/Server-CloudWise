@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BuisnessLogic.MachineInfo;
 namespace BuisnessLogic.Requester
 {
-    public class NodeExporter : AgentApi
+    public class ProcessExporter : Process, Exporter
     {
-        RequestClient RequestClient = new RequestClient();
-        public string URLBase => $"http://{IP}:{Port}{Api}";
-        public string IP => "20.85.68.63";
-        public override string Port => "9090";
+        RequestClient RequestClient;
+
+        public ProcessExporter():base("process_exporter", 0, "", "9256")
+        {
+            RequestClient = new RequestClient();
+        }
+
+        public string URLBase => $"http://ip:{Port}{Api}";
         public string Api => @"/api/v1";
         public string Query_range(string query) => $@"/query_range?query=irate({query})";
         public string CpuUsageQuery(string modeToExclude = "idle", string jobName = "DEMO-VMs", int timeInMinute = 5)
@@ -19,7 +23,7 @@ namespace BuisnessLogic.Requester
             return $"node_cpu_seconds_total{{mode!='{modeToExclude}',job='{jobName}'}}[{timeInMinute}m]";
         }
         public long ConvertToUnix(DateTime time) => ((DateTimeOffset)time).ToUnixTimeSeconds();
-        public override string GetCpu(/*DateTime start, DateTime end, */string steps = "15s")
+        public string GetCpu(/*DateTime start, DateTime end, */string steps = "15s")
         {
             try
             {
@@ -32,7 +36,7 @@ namespace BuisnessLogic.Requester
             }
         }
 
-        public override string GetMemory()
+        public string GetMemory()
         {
             //todo
             try
