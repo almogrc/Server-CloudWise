@@ -9,7 +9,7 @@ namespace Server_cloudata.Controllers
     public class VmdataController : ControllerBase
     {
         AgentApi agent = new NodeExporter();
-        // GET: api/TodoItems
+        // GET: api/TodoItem
 
         [HttpGet("cpu")]
         public IActionResult GetCpuUsage()

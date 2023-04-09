@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Server_cloudata.Models;
+using Server_cloudata.Services;
 
 namespace Server_cloudata
 {
@@ -24,6 +26,10 @@ namespace Server_cloudata
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+
+            //~~~
+            services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
+            services.AddSingleton<CustomersService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

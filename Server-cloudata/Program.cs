@@ -18,6 +18,8 @@ namespace Server_cloudata
             //string cpuResults = nodeExporter.GetCpu();
             //string memoryResults = nodeExporter.GetMemory();
             CreateHostBuilder(args).Build().Run();
+            
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
