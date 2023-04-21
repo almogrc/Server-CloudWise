@@ -1,4 +1,4 @@
-﻿using BuisnessLogic.Requester;
+﻿using BuisnessLogic.Collector;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 

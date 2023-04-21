@@ -1,4 +1,4 @@
-﻿using BuisnessLogic.Requester;
+﻿using BuisnessLogic.Collector;
 using System;
 using System.Collections.Generic;
 using System.Linq;

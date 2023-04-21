@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BuisnessLogic.MachineInfo;
-namespace BuisnessLogic.Requester
+
+namespace BuisnessLogic.Collector
 {
     public class ProcessExporter : Process, Exporter
     {
         RequestClient RequestClient;
 
-        public ProcessExporter():base("process_exporter", 0, "", "9256")
+        public ProcessExporter() : base("process_exporter", 0, "", "9256")
         {
             RequestClient = new RequestClient();
         }
 
-        public string URLBase => $"http://ip:{Port}{Api}";
+        public string URLBase => $"http://localhost:{Port}{Api}";
         public string Api => @"/api/v1";
         public string Query_range(string query) => $@"/query_range?query=irate({query})";
         public string CpuUsageQuery(string modeToExclude = "idle", string jobName = "DEMO-VMs", int timeInMinute = 5)
@@ -30,7 +31,8 @@ namespace BuisnessLogic.Requester
                 string url = $@"{URLBase}{Query_range(CpuUsageQuery())}&start={1679508923/*ConvertToUnix(start)*/}&end={1679515857/*ConvertToUnix(end)*/}&step={steps}";
 
                 return RequestClient.GetAsync(url).Result;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw e;
             }

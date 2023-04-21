@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuisnessLogic.Requester
+namespace BuisnessLogic.Collector
 {
     public interface Exporter
     {
