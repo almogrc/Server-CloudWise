@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.Enums;
 using BuisnessLogic.Collector.Prometheus;
+using BuisnessLogic.MachineInfo;
+
 namespace BuisnessLogic.Collector
 {
-    internal class ProcessExporterCollector : ICollector
+    internal class ProcessExporterCollector : ICollector<Group> // composer
     {
         private RequestClient _client = new RequestClient();
         private string Instance => $"{_ip}:{_port}";
         private string _ip = "localhost";
         private string _port = "9256";
         private PrometheusAPI _prometheusAPI = new PrometheusAPI();
-
-        public Dictionary<ProcessExporeterData, string> Data { get; } = new Dictionary<ProcessExporeterData, string>();
+        private Dictionary<ProcessExporeterData, string> _data { get; } = new Dictionary<ProcessExporeterData, string>();
+        
+        private GroupBuilder _groupBuilder = new GroupBuilder();
+        public IBuilder<Group> Builder => _groupBuilder;
 
         public ProcessExporterCollector(string ip = "localhost", string port = "9256")
         {
@@ -40,6 +45,7 @@ namespace BuisnessLogic.Collector
         {
             return $"namedprocess_namegroup_memory_bytes{{memtype=\"{memoryType}\",instance=\"{Instance}\"}}";
         }
+
         public void Collect()
         {
             foreach (ProcessExporeterData processExporeterData in Enum.GetValues(typeof(ProcessExporeterData)))
@@ -49,25 +55,27 @@ namespace BuisnessLogic.Collector
                 switch (processExporeterData)
                 {
                     case ProcessExporeterData.cpu:
-                        url = _prometheusAPI.BuildUrlQueryRange(CPUAllQuery(), DateTime.Today.AddDays(-1), DateTime.Now);
+                        url = _prometheusAPI.BuildUrlQueryRangeWithRate(CPUAllQuery(), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
                         break;
                     case ProcessExporeterData.memory:
-                        url = _prometheusAPI.BuildUrlQueryRange(MemoryAllQuery(), DateTime.Today.AddDays(-1), DateTime.Now);
+                        url = _prometheusAPI.BuildUrlQueryRange(MemoryAllQuery(), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
                         break;
                     default:
                         throw new Exception("can't send request"); // almog to handle exception
                 }
                 sendRequestAndUpdateData(url.AbsoluteUri, processExporeterData);
             }
+            _groupBuilder.DataToConvert = _data;
+            Builder.Build();
         }
         private void sendRequestAndUpdateData(string url, ProcessExporeterData processExporeterData)
         {
             //send request
             string result = _client.GetAsync(url).Result;
             //update map
-            Data[processExporeterData] = result;
+            _data[processExporeterData] = result;
 
-        }
+        }      
         public void Collect(string information)
         {
             throw new NotImplementedException();

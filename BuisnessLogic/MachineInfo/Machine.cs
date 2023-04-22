@@ -10,7 +10,7 @@ namespace BuisnessLogic.MachineInfo
     public class Machine
     {
         public string IP { get; }
-        public List<Process> Processes { get; }
+        public List<Group> Processes { get; }
         public ProcessExporter processExporter { get; }
     }
 }

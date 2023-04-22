@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BuisnessLogic.Extentions;
 namespace BuisnessLogic.Collector.Prometheus
 {
-    public class PrometheusAPI
+    internal class PrometheusAPI
     {
         public string URLBase => $"http://localhost:{Port}{Api}";
         public string Api => @"/api/v1";
@@ -22,7 +22,12 @@ namespace BuisnessLogic.Collector.Prometheus
             return new Uri($@"{URLBase}{Api}{QueryRange}
                 ?{QueryKey}={query}&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
         }
-     
+        public Uri BuildUrlQueryRangeWithRate(string query, DateTime start, DateTime end, string step = "1m", string rate = "1s")
+        {
+            return new Uri($@"{URLBase}{Api}{QueryRange}
+                ?{QueryKey}=rate({query}[{rate}])&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
+        }
+
         //public string Instance{ get; } = "9090";
     }
 }

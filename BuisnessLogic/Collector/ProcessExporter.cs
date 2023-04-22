@@ -7,7 +7,7 @@ using BuisnessLogic.MachineInfo;
 
 namespace BuisnessLogic.Collector
 {
-    public class ProcessExporter : Process, Exporter
+    public class ProcessExporter : Group, Exporter
     {
         RequestClient RequestClient;
 
