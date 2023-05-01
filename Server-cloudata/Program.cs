@@ -1,4 +1,5 @@
 using BuisnessLogic.Collector;
+using BuisnessLogic.MachineInfo;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -8,8 +9,8 @@ namespace Server_cloudata
     {
         public static void Main(string[] args)
         {
-            ProcessExporter nodeExporter = new ProcessExporter();
-            string cpuResults = nodeExporter.GetCpu();
+            Machine machine = new Machine();
+            machine.CollectInformation();
             //string memoryResults = nodeExporter.GetMemory();
             CreateHostBuilder(args).Build().Run();
         }

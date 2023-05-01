@@ -10,7 +10,15 @@ namespace BuisnessLogic.MachineInfo
     public class Machine
     {
         public string IP { get; }
-        public List<Group> Processes { get; }
-        public ProcessExporter processExporter { get; }
+        public Dictionary<string, Group> Groups { get; }
+        internal ICollector<Group> processExporter { get; set; }
+
+
+
+        public void CollectInformation()
+        {
+            processExporter = new ProcessExporterCollector();
+            processExporter.Collect();
+        }
     }
 }

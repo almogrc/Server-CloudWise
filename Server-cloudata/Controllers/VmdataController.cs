@@ -8,18 +8,18 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class VmdataController : ControllerBase
     {
-        ProcessExporter agent = new ProcessExporter();
-        // GET: api/TodoItems
-
-        [HttpGet("cpu")]
-        public IActionResult GetCpuUsage()
-        { 
-            return Ok(agent.GetCpu());
-        }
-        [HttpGet("memory")]
-        public IActionResult GetMemoryUsage()
-        {       
-            return Ok(agent.GetMemory());
-        }
+        //ProcessExporter agent = new ProcessExporter();
+        //// GET: api/TodoItems
+        //
+        //[HttpGet("cpu")]
+        //public IActionResult GetCpuUsage()
+        //{ 
+        //    return Ok(agent.GetCpu());
+        //}
+        //[HttpGet("memory")]
+        //public IActionResult GetMemoryUsage()
+        //{       
+        //    return Ok(agent.GetMemory());
+        //}
     }
 }

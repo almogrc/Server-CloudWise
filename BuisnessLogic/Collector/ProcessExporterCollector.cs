@@ -35,15 +35,15 @@ namespace BuisnessLogic.Collector
         }
         public string MemoryQuery(string groupName, MemoryType memoryType = MemoryType.Resident)
         {
-            return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType}\",instance=\"{Instance}\"}}";
+            return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         }
-        public string CPUAllQuery(CPUMode cpuMode = CPUMode.user)
+        public string CPUAllQuery()
         {
-            return $"namedprocess_namegroup_cpu_seconds_total{{mode=\"{cpuMode}\",instance=\"{Instance}\"}}";
+            return $"namedprocess_namegroup_cpu_seconds_total{{instance=\"{Instance}\"}}";
         }
-        public string MemoryAllQuery(MemoryType memoryType = MemoryType.Resident)
+        public string MemoryAllQuery()
         {
-            return $"namedprocess_namegroup_memory_bytes{{memtype=\"{memoryType}\",instance=\"{Instance}\"}}";
+            return $"namedprocess_namegroup_memory_bytes{{instance=\"{Instance}\"}}";
         }
 
         public void Collect()

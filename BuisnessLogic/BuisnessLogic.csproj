@@ -51,7 +51,6 @@
     <Compile Include="Collector\Enums\MemoryType.cs" />
     <Compile Include="Collector\Enums\ProcessExporeterData.cs" />
     <Compile Include="Collector\ICollector.cs" />
-    <Compile Include="Collector\ProcessExporter.cs" />
     <Compile Include="Collector\ProcessExporterCollector.cs" />
     <Compile Include="Collector\Prometheus\PrometheusAPI.cs" />
     <Compile Include="Extentions\DatetimeExtention.cs" />
