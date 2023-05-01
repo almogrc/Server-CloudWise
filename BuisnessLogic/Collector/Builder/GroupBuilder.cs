@@ -13,11 +13,10 @@ namespace BuisnessLogic.Collector.Builder
     {
         public Dictionary<string, Group> Groups { get; private set; }
         public Dictionary<ProcessExporeterData, string> DataToConvert { get; set; }
-        //public GroupBuilder(Dictionary<ProcessExporeterData, string> dataToConvert)
-        //{
-        //    Processes = new Dictionary<string, Group>();
-        //    _dataToConvert = dataToConvert;
-        //}
+        public GroupBuilder()
+        {
+            Groups = new Dictionary<string, Group>();
+        }
         public void Build()
         {
             Groups.Clear();

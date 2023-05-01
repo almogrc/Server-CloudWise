@@ -19,13 +19,11 @@ namespace BuisnessLogic.Collector.Prometheus
         public string stepKey => "step";
         public Uri BuildUrlQueryRange(string query, DateTime start, DateTime end, string step = "1m")
         {
-            return new Uri($@"{URLBase}{QueryRange}
-                ?{QueryKey}={query}&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
+            return new Uri($@"{URLBase}{QueryRange}?{QueryKey}={query}&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
         }
         public Uri BuildUrlQueryRangeWithRate(string query, DateTime start, DateTime end, string step = "1m", string rate = "1m")
         {
-            return new Uri($@"{URLBase}{QueryRange}
-                ?{QueryKey}=rate({query}[{rate}])&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
+            return new Uri($@"{URLBase}{QueryRange}?{QueryKey}=rate({query}[{rate}])&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
         }
 
         //public string Instance{ get; } = "9090";
