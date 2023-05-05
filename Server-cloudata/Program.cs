@@ -1,5 +1,5 @@
 using BuisnessLogic.Collector;
-using BuisnessLogic.MachineInfo;
+using BuisnessLogic.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 

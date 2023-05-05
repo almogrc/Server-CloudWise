@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuisnessLogic.Collector.Builder
+namespace BuisnessLogic.Manager
 {
-    interface IBuilder<T>
+    public class DataManager
     {
-        T GetResult();
-        void Build();
+        private Dictionary<string, CustomerManager> _customersManagers;
     }
 }

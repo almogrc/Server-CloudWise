@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuisnessLogic.Collector.Builder
+namespace BuisnessLogic.Collector.Enums
 {
-    interface IBuilder<T>
+    public enum NodeExporterData
     {
-        T GetResult();
-        void Build();
+        AvailabeBytes
     }
 }

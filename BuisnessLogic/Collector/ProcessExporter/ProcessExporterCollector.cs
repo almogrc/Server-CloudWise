@@ -6,27 +6,18 @@ using System.Threading.Tasks;
 using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.Enums;
 using BuisnessLogic.Collector.Prometheus;
-using BuisnessLogic.MachineInfo;
+using BuisnessLogic.Model;
 
-namespace BuisnessLogic.Collector
+namespace BuisnessLogic.Collector.ProcessExporter
 {
-    internal class ProcessExporterCollector : ICollector<Group> // composer
+    internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups> // composer
     {
-        private RequestClient _client = new RequestClient();
-        private string Instance => $"{_ip}:{_port}";
-        private string _ip = "localhost";
-        private string _port = "9256";
-        private PrometheusAPI _prometheusAPI = new PrometheusAPI();
         private Dictionary<ProcessExporeterData, string> _data { get; } = new Dictionary<ProcessExporeterData, string>();
-        
         private GroupBuilder _groupBuilder = new GroupBuilder();
-        public IBuilder<Group> Builder => _groupBuilder;
+        public IBuilder<Groups> Builder => _groupBuilder;
 
-        public ProcessExporterCollector(string ip = "localhost", string port = "9256")
-        {
-            _port = port;
-            _ip = ip;
-
+        public ProcessExporterCollector():base("9256")
+        {       
         }
 
         public string CPUQuery(string groupName, CPUMode cpuMode = CPUMode.user)

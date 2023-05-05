@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuisnessLogic.Collector.Builder
+namespace BuisnessLogic.Algorithms
 {
-    interface IBuilder<T>
+    interface IPredictiveAlgorithm
     {
-        T GetResult();
-        void Build();
+        List<double> Predict();
     }
 }
