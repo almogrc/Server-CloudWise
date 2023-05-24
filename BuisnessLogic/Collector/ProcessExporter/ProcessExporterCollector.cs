@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.Enums;
 using BuisnessLogic.Collector.Prometheus;
+using BuisnessLogic.Exceptions;
+using BuisnessLogic.Extentions;
 using BuisnessLogic.Model;
 
 namespace BuisnessLogic.Collector.ProcessExporter
@@ -28,32 +30,19 @@ namespace BuisnessLogic.Collector.ProcessExporter
         {
             return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         }
-        public string CPUAllQuery()
+       
+        public string AllDataQuery(ProcessExporeterData processExporeterDataType)
         {
-            return $"namedprocess_namegroup_cpu_seconds_total{{instance=\"{Instance}\"}}";
-        }
-        public string MemoryAllQuery()
-        {
-            return $"namedprocess_namegroup_memory_bytes{{instance=\"{Instance}\"}}";
+            return $"{processExporeterDataType.GetStringValue()}{{instance=\"{Instance}\"}}";
         }
 
         public void Collect()
         {
             foreach (ProcessExporeterData processExporeterData in Enum.GetValues(typeof(ProcessExporeterData)))
             {
-                Uri url;
+                Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(AllDataQuery(processExporeterData),
+                    DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
 
-                switch (processExporeterData)
-                {
-                    case ProcessExporeterData.cpu:
-                        url = _prometheusAPI.BuildUrlQueryRangeWithRate(CPUAllQuery(), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
-                        break;
-                    case ProcessExporeterData.memory:
-                        url = _prometheusAPI.BuildUrlQueryRange(MemoryAllQuery(), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
-                        break;
-                    default:
-                        throw new Exception("can't send request"); // almog to handle exception
-                }
                 sendRequestAndUpdateData(url.AbsoluteUri, processExporeterData);
             }
             _groupBuilder.DataToConvert = _data;

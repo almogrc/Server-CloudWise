@@ -1,4 +1,5 @@
 ﻿using BuisnessLogic.Collector.Enums;
+using BuisnessLogic.Exceptions;
 using BuisnessLogic.Model;
 using Newtonsoft.Json;
 using System;
@@ -46,7 +47,8 @@ namespace BuisnessLogic.Collector.Builder
                 dateTime = unixSecondsToDateTime((long)value.First.Value);
                 if (!double.TryParse(value.Last.Value, out usageValue))
                 {
-                    throw new Exception("invalid format");
+                    throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("double",
+                           value.Last.Value.ToString()));
                 }
                 dateTimeToMemoryUsage.AddFirst(new KeyValuePair<DateTime, double>(dateTime, usageValue));
             }
@@ -63,7 +65,7 @@ namespace BuisnessLogic.Collector.Builder
             var json = JsonConvert.DeserializeObject<dynamic>(jsonString);
             if (json["status"] != "success")
             {
-                throw new Exception("invalid format file");
+                throw new UnsuccessfulResponseException($"JSON status - {json["status"]}");
             }
             json = json["data"]["result"];
             return json;
