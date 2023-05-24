@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BuisnessLogic.Collector.Enums;
 using Newtonsoft.Json;
+using BuisnessLogic.Exceptions;
 
 namespace BuisnessLogic.Collector.Builder
 {
@@ -31,7 +32,8 @@ namespace BuisnessLogic.Collector.Builder
                         convertJsonMemoryDataToGroup(DataToConvert[processExporeterData]);
                         break;
                     default:
-                        throw new Exception("can't send request"); // almog to handle exception
+                        throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("ProcessExporeterData",
+                            processExporeterData.ToString()));
                 }
             }
         }
@@ -70,7 +72,7 @@ namespace BuisnessLogic.Collector.Builder
             var json = JsonConvert.DeserializeObject<dynamic>(jsonString);
             if (json["status"] != "success")
             {
-                throw new Exception("invalid format file");
+                throw new UnsuccessfulResponseException($"JSON status - {json["status"]}");
             }
             json = json["data"]["result"];
             return json;
@@ -116,7 +118,8 @@ namespace BuisnessLogic.Collector.Builder
                 dateTime = unixSecondsToDateTime((long)value.First.Value);
                 if(!double.TryParse(value.Last.Value, out usageValue))
                 {
-                    throw new Exception("can't convert almog..");
+                    throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("double",
+                           value.Last.Value.ToString()));
                 }
                
                 dateTimeToMemoryUsage.AddFirst(new KeyValuePair<DateTime, double>(dateTime, usageValue));
@@ -129,7 +132,8 @@ namespace BuisnessLogic.Collector.Builder
             MemoryType result;
             if (!Enum.TryParse<MemoryType>(memType, true, out result))
             {  // ignore cases
-                throw new Exception("invalid format file almog dont be NPC");
+                throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("MemoryType",
+                            result.ToString()));
             }
 
             return result;
@@ -139,7 +143,8 @@ namespace BuisnessLogic.Collector.Builder
             CPUMode result;
             if (!Enum.TryParse<CPUMode>(mode, true, out result))
             {  // ignore cases
-                throw new Exception("invalid format file almog dont be NPC");
+                throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("CPUMode",
+                            result.ToString()));
             }
 
             return result;

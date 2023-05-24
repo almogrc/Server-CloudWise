@@ -8,7 +8,9 @@ namespace BuisnessLogic.Collector.Enums
 {
     enum ProcessExporeterData
     {
+        [QueryValue("namedprocess_namegroup_cpu_seconds_total")]
         cpu,
-        memory
+        [QueryValue("namedprocess_namegroup_memory_bytes")]
+        memory 
     }
 }

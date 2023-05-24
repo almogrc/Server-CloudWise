@@ -11,11 +11,11 @@ namespace Server_cloudata.Controllers
         //ProcessExporter agent = new ProcessExporter();
         //// GET: api/TodoItems
         //
-        //[HttpGet("cpu")]
-        //public IActionResult GetCpuUsage()
-        //{ 
-        //    return Ok(agent.GetCpu());
-        //}
+        [HttpGet("cpu")]
+        public IActionResult GetCpuUsage()
+        { 
+            return Ok("Hello Iris");
+        }
         //[HttpGet("memory")]
         //public IActionResult GetMemoryUsage()
         //{       

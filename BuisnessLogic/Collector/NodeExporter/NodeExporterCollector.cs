@@ -1,6 +1,7 @@
 ﻿using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.Enums;
 using BuisnessLogic.Collector.Prometheus;
+using BuisnessLogic.Exceptions;
 using BuisnessLogic.Model;
 using System;
 using System.Collections.Generic;
@@ -37,12 +38,26 @@ namespace BuisnessLogic.Collector.NodeExporter
                         url = _prometheusAPI.BuildUrlQueryRange(AvailabeMamory(), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
                         break;
                     default:
-                        throw new Exception("can't send request"); // almog to handle exception
+                        throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("NodeExporterData",
+                           nodeExporeterData.ToString()));
                 }
                 sendRequestAndUpdateData(url.AbsoluteUri, nodeExporeterData);
             }
             _machineDataBuilder.DataToConvert = _data;
+            //option 1:
+
             Builder.Build();
+
+            //option 2:
+
+            //try
+            //{
+            //    Builder.Build();
+
+            //}catch(UnknownTypeException ex)
+            //{
+            //    throw ex;
+            //}
         }
 
         private void sendRequestAndUpdateData(string url, NodeExporterData nodeExporeterData)
