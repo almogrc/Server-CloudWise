@@ -19,8 +19,9 @@ namespace Server_cloudata
             //logger.LogInformation("Host created.");
             try
             {
-                Machine machine = new Machine();
-                machine.CollectInformation();
+                //Machine machine = new Machine();
+                //machine.CollectInformation();
+                //machine.PredictData();
                 //string memoryResults = nodeExporter.GetMemory();
                 CreateHostBuilder(args).Build().Run();
             }

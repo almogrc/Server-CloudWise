@@ -1,6 +1,8 @@
 ﻿using BuisnessLogic.Collector;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using BuisnessLogic.Model;
+using BuisnessLogic.DTO;
 
 namespace Server_cloudata.Controllers
 {
@@ -13,8 +15,11 @@ namespace Server_cloudata.Controllers
         //
         [HttpGet("cpu")]
         public IActionResult GetCpuUsage()
-        { 
-            return Ok("Hello Iris");
+        {
+            Machine machine = new Machine();
+            machine.CollectInformation();
+            LinearRegressionData res = machine.PredictData();
+            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(res));
         }
         //[HttpGet("memory")]
         //public IActionResult GetMemoryUsage()
