@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BuisnessLogic.Model;
 
 namespace BuisnessLogic.DTO
 {
@@ -10,6 +11,6 @@ namespace BuisnessLogic.DTO
     {
         public double Slope { get; set; }
         public double Intercept { get; set; }
-        public LinkedList<KeyValuePair<DateTime, double>> Data { get; set; }
+        public LinkedList<DataPoint> Data { get; set; }
     }
 }

@@ -18,8 +18,8 @@ namespace Server_cloudata.Controllers
         {
             Machine machine = new Machine();
             machine.CollectInformation();
-            LinearRegressionData res = machine.PredictData();
-            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(res));
+            machine.PredictForcasting();
+            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(""));
         }
         //[HttpGet("memory")]
         //public IActionResult GetMemoryUsage()

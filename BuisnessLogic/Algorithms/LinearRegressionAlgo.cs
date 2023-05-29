@@ -15,7 +15,7 @@ namespace BuisnessLogic.Algorithms
         public List<double> dependentVariable { get; set; }
         public double Slope { get; private set; }
         public double Intercept { get; private set; }
-      
+        
         public void Predict()
         { 
             (double a, double b) res = Fit.Line(independentVariable.ToArray(), dependentVariable.ToArray());

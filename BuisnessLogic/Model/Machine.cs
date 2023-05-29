@@ -44,9 +44,14 @@ namespace BuisnessLogic.Model
                 Logger.Instance.Error(ex.Message + Environment.NewLine + ex.StackTrace);
             }
         }
-        public LinearRegressionData PredictData()
+        public void PredictForcasting()
         {
-            LinkedList<KeyValuePair<DateTime, double>> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
+            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
+            new TimeSeriesForecating(data).Predict();
+        }
+        public LinearRegressionData LinearRegression()
+        {
+            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
             List<double> independetVariable = new List<double>();
             List<double> dependentVariable = new List<double>();
             double i = 1;

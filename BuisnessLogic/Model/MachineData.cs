@@ -9,10 +9,10 @@ namespace BuisnessLogic.Model
 {
     internal class MachineData
     {
-        public Dictionary<NodeExporterData, LinkedList<KeyValuePair<DateTime, double>>> Data { get; set; }
+        public Dictionary<NodeExporterData, LinkedList<DataPoint>> Data { get; set; }
         public MachineData()
         {
-            Data = new Dictionary<NodeExporterData, LinkedList<KeyValuePair<DateTime, double>>>();
+            Data = new Dictionary<NodeExporterData, LinkedList<DataPoint>>();
         }
     }
 }
