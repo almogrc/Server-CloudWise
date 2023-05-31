@@ -81,7 +81,7 @@ namespace BuisnessLogic.Collector.Builder
         {
             Group groupToUpdate;
             CPUMode cpuType = convertFromStringToCpuType(mode);
-            LinkedList<KeyValuePair<DateTime, double>> dateTimeToCpuUsage;
+            LinkedList<DataPoint> dateTimeToCpuUsage;
             createGroupIfNotExist(groupName);
             groupToUpdate = Groups.GroupNameToGroupData[groupName];
             dateTimeToCpuUsage = convertUsage(values);
@@ -92,7 +92,7 @@ namespace BuisnessLogic.Collector.Builder
         {
             Group groupToUpdate;
             MemoryType memoryType = convertFromStringToMemoryType(memType);
-            LinkedList<KeyValuePair<DateTime, double>> dateTimeToMemoryUsage;
+            LinkedList<DataPoint> dateTimeToMemoryUsage;
             createGroupIfNotExist(name);
             groupToUpdate = Groups.GroupNameToGroupData[name];
             dateTimeToMemoryUsage = convertUsage(values);
@@ -107,22 +107,22 @@ namespace BuisnessLogic.Collector.Builder
             }
         }
 
-        LinkedList<KeyValuePair<DateTime, double>> convertUsage(dynamic values)
+        LinkedList<DataPoint> convertUsage(dynamic values)
         {
             //to check
-            LinkedList<KeyValuePair<DateTime, double>> dateTimeToMemoryUsage = new LinkedList<KeyValuePair<DateTime, double>>();
+            LinkedList<DataPoint> dateTimeToMemoryUsage = new LinkedList<DataPoint>();
             DateTime dateTime;
-            double usageValue;
+            float usageValue;
             foreach(var value in values)
             {
                 dateTime = unixSecondsToDateTime((long)value.First.Value);
-                if(!double.TryParse(value.Last.Value, out usageValue))
+                if(!float.TryParse(value.Last.Value, out usageValue))
                 {
                     throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("double",
                            value.Last.Value.ToString()));
                 }
                
-                dateTimeToMemoryUsage.AddFirst(new KeyValuePair<DateTime, double>(dateTime, usageValue));
+                dateTimeToMemoryUsage.AddFirst(new DataPoint { Date = dateTime, Value = usageValue });
             }
 
             return dateTimeToMemoryUsage;

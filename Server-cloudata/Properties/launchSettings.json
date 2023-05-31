@@ -18,7 +18,7 @@
     },
     "WSL": {
       "commandName": "WSL",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "https://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_URLS": "http://localhost:5001;http://localhost:5000",

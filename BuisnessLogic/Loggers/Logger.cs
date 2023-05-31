@@ -1,5 +1,4 @@
-﻿using Accord.Statistics.Kernels;
-
+﻿
 namespace BuisnessLogic.Loggers
 {
     using System;
@@ -19,8 +18,7 @@ namespace BuisnessLogic.Loggers
 
         private Logger()
         {
-            LogManager.LoadConfiguration("C:/Users/almog/Source/Repos/Server-cloudata/BuisnessLogic/nlog.config");
-            
+            LogManager.LoadConfiguration("/mnt/c/Development/BuisnessLogic/nlog.config"); 
         }
 
         public void Info(string message)

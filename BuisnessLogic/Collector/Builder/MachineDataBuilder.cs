@@ -20,7 +20,7 @@ namespace BuisnessLogic.Collector.Builder
         }
         public void Build()
         {
-            LinkedList<KeyValuePair<DateTime, double>> usageValues;
+            LinkedList<DataPoint> usageValues;
             foreach (NodeExporterData nodeExporeterData in DataToConvert.Keys)
             {
                 usageValues = ConvertJsonToData(DataToConvert[nodeExporeterData]);
@@ -28,29 +28,29 @@ namespace BuisnessLogic.Collector.Builder
             }
         }
 
-        private LinkedList<KeyValuePair<DateTime, double>> ConvertJsonToData(string jsonString)
+        private LinkedList<DataPoint> ConvertJsonToData(string jsonString)
         {
             var json = convertToJsonAndCheckValidation(jsonString);
             var values = json.First["values"];
-            LinkedList<KeyValuePair<DateTime, double>> usageValues = convertUsage(values);
+            LinkedList<DataPoint> usageValues = convertUsage(values);
             return usageValues;
 
         }
-        LinkedList<KeyValuePair<DateTime, double>> convertUsage(dynamic values)
+        LinkedList<DataPoint> convertUsage(dynamic values)
         {
             //to check
-            LinkedList<KeyValuePair<DateTime, double>> dateTimeToMemoryUsage = new LinkedList<KeyValuePair<DateTime, double>>();
+            LinkedList<DataPoint> dateTimeToMemoryUsage = new LinkedList<DataPoint>();
             DateTime dateTime;
-            double usageValue;
+            float usageValue;
             foreach (var value in values)
             {
                 dateTime = unixSecondsToDateTime((long)value.First.Value);
-                if (!double.TryParse(value.Last.Value, out usageValue))
+                if (!float.TryParse(value.Last.Value, out usageValue))
                 {
                     throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("double",
                            value.Last.Value.ToString()));
                 }
-                dateTimeToMemoryUsage.AddFirst(new KeyValuePair<DateTime, double>(dateTime, usageValue));
+                dateTimeToMemoryUsage.AddFirst(new DataPoint { Date = dateTime, Value = usageValue });
             }
 
             return dateTimeToMemoryUsage;

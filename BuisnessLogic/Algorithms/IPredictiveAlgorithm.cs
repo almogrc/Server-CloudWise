@@ -8,6 +8,7 @@ namespace BuisnessLogic.Algorithms
 {
     interface IPredictiveAlgorithm
     {
-        List<double> Predict();
+        void Predict();
+
     }
 }
