@@ -16,6 +16,7 @@ namespace BuisnessLogic.Algorithms
         
         private MLContext _context;
         private LinkedList<DataPoint> _data;
+        public float[] Result { get; private set; }
         public TimeSeriesForecating(LinkedList<DataPoint> data)
         {
             _context = new MLContext();
@@ -36,10 +37,11 @@ namespace BuisnessLogic.Algorithms
             using (var forcastingEngine = model.CreateTimeSeriesEngine<DataPoint, DataPointForcast>(_context))
             {
                 var forcasts = forcastingEngine.Predict();
+                Result = forcasts.Forecast;
                 // foreach (var item in forcasts.Value){
 
-                foreach(var item in forcasts.Forecast) 
-                    Console.WriteLine(item);
+                //foreach(var item in forcasts.Forecast) 
+                //    Console.WriteLine(item);
              //   }
 
             }

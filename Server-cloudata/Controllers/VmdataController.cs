@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using BuisnessLogic.Model;
+using BuisnessLogic.Algorithms.DTOPrediction;
 using BuisnessLogic.DTO;
 
 namespace Server_cloudata.Controllers
@@ -18,8 +19,8 @@ namespace Server_cloudata.Controllers
         {
             Machine machine = new Machine();
             machine.CollectInformation();
-            machine.PredictForcasting();
-            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(""));
+            PredictData predict = machine.PredictForcasting();
+            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(predict));
         }
         //[HttpGet("memory")]
         //public IActionResult GetMemoryUsage()

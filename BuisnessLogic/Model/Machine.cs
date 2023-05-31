@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using BuisnessLogic.Collector.Enums;
 using BuisnessLogic.Algorithms;
 using System.Linq;
+using BuisnessLogic.Algorithms.DTOPrediction;
 using BuisnessLogic.DTO;
 
 namespace BuisnessLogic.Model
@@ -44,10 +45,13 @@ namespace BuisnessLogic.Model
                 Logger.Instance.Error(ex.Message + Environment.NewLine + ex.StackTrace);
             }
         }
-        public void PredictForcasting()
+        public PredictData PredictForcasting()
         {
             LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
-            new TimeSeriesForecating(data).Predict();
+            data.Reverse();
+            TimeSeriesForecating algo = new TimeSeriesForecating(data);
+            algo.Predict();
+            return new PredictData(algo.Result, 60, data.Last().Date);
         }
         public LinearRegressionData LinearRegression()
         {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BuisnessLogic.Model;
 
-namespace BuisnessLogic.DTO
+namespace BuisnessLogic.Algorithms.DTOPrediction
 {
     public class LinearRegressionData
     {
