@@ -12,17 +12,44 @@ namespace BuisnessLogic.Model
 {
     public class Machine
     {
-        public Machine()
+        private Machine()
         {
             MachineDataManager = new MachineDataManager();
             CollectManager = new CollectManager();
             Logger.Instance.Info($"Machine created.");
         }
-
+        private static Machine _machine;
+        private static object _machineLock = new object();
+        public static Machine MachineInstance
+        {
+            get {
+                if (_machine == null)
+                {
+                    lock( _machineLock )
+                    {
+                        if(_machine == null)
+                        {
+                            _machine = new Machine();
+                        }
+                    }
+                }
+                return _machine
+            }
+        }
         public string IP { get; }
         internal MachineDataManager MachineDataManager { get; private set; }
         internal CollectManager CollectManager { get; private set; }
-
+        public void GetData(ExporterType exporterType, string query, DateTime start, DateTime end)
+        {
+            if(exporterType == ExporterType.node)
+            {
+                CollectManager.nodeExporter.Collect(query, start, end);
+            }
+            else if(exporterType == ExporterType.process)
+            {
+                CollectManager.processExporter.Collect(query, start, end);
+            }
+        }
         public void CollectInformation()
         {
             try

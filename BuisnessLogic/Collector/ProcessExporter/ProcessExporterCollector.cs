@@ -14,7 +14,7 @@ namespace BuisnessLogic.Collector.ProcessExporter
 {
     internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups> // composer
     {
-        private Dictionary<ProcessExporeterData, string> _data { get; } = new Dictionary<ProcessExporeterData, string>();
+        private Dictionary<ProcessExporterData, string> _data { get; } = new Dictionary<ProcessExporterData, string>();
         private GroupBuilder _groupBuilder = new GroupBuilder();
         public IBuilder<Groups> Builder => _groupBuilder;
 
@@ -31,14 +31,14 @@ namespace BuisnessLogic.Collector.ProcessExporter
             return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         }
        
-        public string AllDataQuery(ProcessExporeterData processExporeterDataType)
+        public string AllDataQuery(ProcessExporterData processExporeterDataType)
         {
             return $"{processExporeterDataType.GetStringValue()}{{instance=\"{Instance}\"}}";
         }
 
         public void Collect()
         {
-            foreach (ProcessExporeterData processExporeterData in Enum.GetValues(typeof(ProcessExporeterData)))
+            foreach (ProcessExporterData processExporeterData in Enum.GetValues(typeof(ProcessExporterData)))
             {
                 Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(AllDataQuery(processExporeterData),
                     DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
@@ -48,7 +48,7 @@ namespace BuisnessLogic.Collector.ProcessExporter
             _groupBuilder.DataToConvert = _data;
             Builder.Build();
         }
-        private void sendRequestAndUpdateData(string url, ProcessExporeterData processExporeterData)
+        private void sendRequestAndUpdateData(string url, ProcessExporterData processExporeterData)
         {
             //send request
             string result = _client.GetAsync(url).Result;

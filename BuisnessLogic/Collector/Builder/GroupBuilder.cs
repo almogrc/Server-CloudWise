@@ -13,7 +13,7 @@ namespace BuisnessLogic.Collector.Builder
     internal class GroupBuilder : IBuilder<Groups>
     {
         public Groups Groups { get; private set; }
-        public Dictionary<ProcessExporeterData, string> DataToConvert { get; set; }
+        public Dictionary<ProcessExporterData, string> DataToConvert { get; set; }
         public GroupBuilder()
         {
             Groups = new Groups();
@@ -21,14 +21,14 @@ namespace BuisnessLogic.Collector.Builder
         public void Build()
         {
             Groups.GroupNameToGroupData.Clear();
-            foreach (ProcessExporeterData processExporeterData in DataToConvert.Keys)
+            foreach (ProcessExporterData processExporeterData in DataToConvert.Keys)
             {
                 switch (processExporeterData)
                 {
-                    case ProcessExporeterData.cpu:
+                    case ProcessExporterData.cpu:
                         convertJsonCpuDataToGroup(DataToConvert[processExporeterData]);
                         break;
-                    case ProcessExporeterData.memory:
+                    case ProcessExporterData.memory:
                         convertJsonMemoryDataToGroup(DataToConvert[processExporeterData]);
                         break;
                     default:

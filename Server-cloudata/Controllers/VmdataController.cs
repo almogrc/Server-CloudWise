@@ -14,7 +14,7 @@ namespace Server_cloudata.Controllers
         //ProcessExporter agent = new ProcessExporter();
         //// GET: api/TodoItems
         //
-        [HttpGet("cpu")]
+        [HttpGet("RamUsage")]
         public IActionResult GetCpuUsage()
         {
             Machine machine = new Machine();
@@ -22,6 +22,8 @@ namespace Server_cloudata.Controllers
             PredictData predict = machine.PredictForcasting();
             return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(predict));
         }
+        [HttpGet("RamUsagePredict")]
+
         //[HttpGet("memory")]
         //public IActionResult GetMemoryUsage()
         //{       
