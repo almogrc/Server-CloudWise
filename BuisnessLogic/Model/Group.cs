@@ -15,16 +15,16 @@ namespace BuisnessLogic.Model
         public string Name { get; set; }
         public int NumberOfProcesses { get; set; } = 1;
         //cpuUsage
-        public Dictionary<CPUMode, LinkedList<DataPoint>> CpuUsage { get; set; }
+        public Dictionary<eCPUMode, LinkedList<DataPoint>> CpuUsage { get; set; }
         //memoryUsage
-        public Dictionary<MemoryType, LinkedList<DataPoint>> MemoryUsage { get; set; }
+        public Dictionary<eMemoryType, LinkedList<DataPoint>> MemoryUsage { get; set; }
         
         public Group(string name, int numberOfProcesses = 1)
         {
             Name = name;
             NumberOfProcesses = numberOfProcesses;
-            CpuUsage = new Dictionary<CPUMode, LinkedList<DataPoint>>();
-            MemoryUsage = new Dictionary<MemoryType, LinkedList<DataPoint>>();
+            CpuUsage = new Dictionary<eCPUMode, LinkedList<DataPoint>>();
+            MemoryUsage = new Dictionary<eMemoryType, LinkedList<DataPoint>>();
         }
         
 

@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Builder
 {
-    internal class MachineDataBuilder : IBuilder<MachineData>
+    internal class MachineDataBuilder : IBuilder<NodeData>
     {
-        private MachineData _machineData;
-        public Dictionary<NodeExporterData, string> DataToConvert { get; set; }
+        private NodeData _machineData;
+        public Dictionary<eNodeExporterData, string> DataToConvert { get; set; }
         public MachineDataBuilder()
         {
-            _machineData = new MachineData();
+            _machineData = new NodeData();
         }
         public void Build()
         {
             LinkedList<DataPoint> usageValues;
-            foreach (NodeExporterData nodeExporeterData in DataToConvert.Keys)
+            foreach (eNodeExporterData nodeExporeterData in DataToConvert.Keys)
             {
                 usageValues = ConvertJsonToData(DataToConvert[nodeExporeterData]);
                 _machineData.Data[nodeExporeterData] = usageValues;
@@ -70,7 +70,7 @@ namespace BuisnessLogic.Collector.Builder
             json = json["data"]["result"];
             return json;
         }
-        public MachineData GetResult()
+        public NodeData GetResult()
         {
             return _machineData;
         }

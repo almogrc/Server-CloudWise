@@ -17,7 +17,7 @@ namespace Server_cloudata.Controllers
             {
                 queries.CheckValidation();
                 Machine machine = Machine.MachineInstance;
-                machine.CollectInformation();
+                machine.GetData(queries.Exporter, queries.Query, queries.Start);
                 PredictData predict = machine.PredictForcasting();
                 return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(predict));
             }catch (Exception ex) // server's execptions and Buissnes logic

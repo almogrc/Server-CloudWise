@@ -12,7 +12,7 @@ namespace BuisnessLogic.Model
     internal class CollectManager
     {
         internal ICollector<Groups> processExporter { get; set; }
-        internal ICollector<MachineData> nodeExporter { get; set; }
+        internal ICollector<NodeData> nodeExporter { get; set; }
         
         public CollectManager()
         {

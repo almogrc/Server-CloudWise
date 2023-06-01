@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Enums
 {
-    public enum ProcessExporterData
+    public enum eProcessExporterData
     {
         [QueryValue("namedprocess_namegroup_cpu_seconds_total")]
         cpu,

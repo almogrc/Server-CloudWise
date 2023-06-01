@@ -39,15 +39,17 @@ namespace BuisnessLogic.Model
         public string IP { get; }
         internal MachineDataManager MachineDataManager { get; private set; }
         internal CollectManager CollectManager { get; private set; }
-        public void GetData(ExporterType exporterType, string query, DateTime start, DateTime end)
+        public List<DataPoint> GetData(string exporterType, string query, DateTime start)
         {
-            if(exporterType == ExporterType.node)
+            eExporterType exporter;
+            if(!Enum.TryParse(query, out exporter)) { throw new Exception("can't parse exporter"); }
+            if(exporter == eExporterType.node)
             {
-                CollectManager.nodeExporter.Collect(query, start, end);
+                CollectManager.nodeExporter.Collect(query, start);
             }
-            else if(exporterType == ExporterType.process)
+            else if(exporter == eExporterType.process)
             {
-                CollectManager.processExporter.Collect(query, start, end);
+                CollectManager.processExporter.Collect(query, start);
             }
         }
         public void CollectInformation()
@@ -74,7 +76,7 @@ namespace BuisnessLogic.Model
         }
         public PredictData PredictForcasting()
         {
-            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
+            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[eCPUMode.user];
             data.Reverse();
             TimeSeriesForecating algo = new TimeSeriesForecating(data);
             algo.Predict();
@@ -82,7 +84,7 @@ namespace BuisnessLogic.Model
         }
         public LinearRegressionData LinearRegression()
         {
-            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
+            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[eCPUMode.user];
             List<double> independetVariable = new List<double>();
             List<double> dependentVariable = new List<double>();
             double i = 1;

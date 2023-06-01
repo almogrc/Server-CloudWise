@@ -13,7 +13,7 @@ namespace BuisnessLogic.Collector.Builder
     internal class GroupBuilder : IBuilder<Groups>
     {
         public Groups Groups { get; private set; }
-        public Dictionary<ProcessExporterData, string> DataToConvert { get; set; }
+        public Dictionary<eProcessExporterData, string> DataToConvert { get; set; }
         public GroupBuilder()
         {
             Groups = new Groups();
@@ -21,14 +21,14 @@ namespace BuisnessLogic.Collector.Builder
         public void Build()
         {
             Groups.GroupNameToGroupData.Clear();
-            foreach (ProcessExporterData processExporeterData in DataToConvert.Keys)
+            foreach (eProcessExporterData processExporeterData in DataToConvert.Keys)
             {
                 switch (processExporeterData)
                 {
-                    case ProcessExporterData.cpu:
+                    case eProcessExporterData.cpu:
                         convertJsonCpuDataToGroup(DataToConvert[processExporeterData]);
                         break;
-                    case ProcessExporterData.memory:
+                    case eProcessExporterData.memory:
                         convertJsonMemoryDataToGroup(DataToConvert[processExporeterData]);
                         break;
                     default:
@@ -80,7 +80,7 @@ namespace BuisnessLogic.Collector.Builder
         void createOrUpdateGroupCpuUsage(string groupName, string mode, dynamic values)
         {
             Group groupToUpdate;
-            CPUMode cpuType = convertFromStringToCpuType(mode);
+            eCPUMode cpuType = convertFromStringToCpuType(mode);
             LinkedList<DataPoint> dateTimeToCpuUsage;
             createGroupIfNotExist(groupName);
             groupToUpdate = Groups.GroupNameToGroupData[groupName];
@@ -91,7 +91,7 @@ namespace BuisnessLogic.Collector.Builder
         void createOrUpdateGroupMemoryUsage(string name, string memType, dynamic values) 
         {
             Group groupToUpdate;
-            MemoryType memoryType = convertFromStringToMemoryType(memType);
+            eMemoryType memoryType = convertFromStringToMemoryType(memType);
             LinkedList<DataPoint> dateTimeToMemoryUsage;
             createGroupIfNotExist(name);
             groupToUpdate = Groups.GroupNameToGroupData[name];
@@ -127,10 +127,10 @@ namespace BuisnessLogic.Collector.Builder
 
             return dateTimeToMemoryUsage;
         }
-        private MemoryType convertFromStringToMemoryType(string memType)
+        private eMemoryType convertFromStringToMemoryType(string memType)
         {
-            MemoryType result;
-            if (!Enum.TryParse<MemoryType>(memType, true, out result))
+            eMemoryType result;
+            if (!Enum.TryParse<eMemoryType>(memType, true, out result))
             {  // ignore cases
                 throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("MemoryType",
                             result.ToString()));
@@ -138,10 +138,10 @@ namespace BuisnessLogic.Collector.Builder
 
             return result;
         }
-        private CPUMode convertFromStringToCpuType(string mode)
+        private eCPUMode convertFromStringToCpuType(string mode)
         {
-            CPUMode result;
-            if (!Enum.TryParse<CPUMode>(mode, true, out result))
+            eCPUMode result;
+            if (!Enum.TryParse<eCPUMode>(mode, true, out result))
             {  // ignore cases
                 throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("CPUMode",
                             result.ToString()));

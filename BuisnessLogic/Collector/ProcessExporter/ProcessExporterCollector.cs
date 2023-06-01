@@ -14,7 +14,7 @@ namespace BuisnessLogic.Collector.ProcessExporter
 {
     internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups> // composer
     {
-        private Dictionary<ProcessExporterData, string> _data { get; } = new Dictionary<ProcessExporterData, string>();
+        private Dictionary<eProcessExporterData, string> _data { get; } = new Dictionary<eProcessExporterData, string>();
         private GroupBuilder _groupBuilder = new GroupBuilder();
         public IBuilder<Groups> Builder => _groupBuilder;
 
@@ -22,23 +22,23 @@ namespace BuisnessLogic.Collector.ProcessExporter
         {       
         }
 
-        public string CPUQuery(string groupName, CPUMode cpuMode = CPUMode.user)
+        public string CPUQuery(string groupName, eCPUMode cpuMode = eCPUMode.user)
         {
             return $"namedprocess_namegroup_cpu_seconds_total{{groupname=\"{groupName}\",mode=\"{cpuMode}\",instance=\"{Instance}\"}}";
         }
-        public string MemoryQuery(string groupName, MemoryType memoryType = MemoryType.Resident)
+        public string MemoryQuery(string groupName, eMemoryType memoryType = eMemoryType.Resident)
         {
             return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         }
        
-        public string AllDataQuery(ProcessExporterData processExporeterDataType)
+        public string AllDataQuery(eProcessExporterData processExporeterDataType)
         {
             return $"{processExporeterDataType.GetStringValue()}{{instance=\"{Instance}\"}}";
         }
 
         public void Collect()
         {
-            foreach (ProcessExporterData processExporeterData in Enum.GetValues(typeof(ProcessExporterData)))
+            foreach (eProcessExporterData processExporeterData in Enum.GetValues(typeof(eProcessExporterData)))
             {
                 Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(AllDataQuery(processExporeterData),
                     DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
@@ -48,15 +48,16 @@ namespace BuisnessLogic.Collector.ProcessExporter
             _groupBuilder.DataToConvert = _data;
             Builder.Build();
         }
-        private void sendRequestAndUpdateData(string url, ProcessExporterData processExporeterData)
+        private void sendRequestAndUpdateData(string url, eProcessExporterData processExporeterData)
         {
             //send request
             string result = _client.GetAsync(url).Result;
             //update map
             _data[processExporeterData] = result;
 
-        }      
-        public void Collect(string information)
+        }
+
+        public void Collect(string query, DateTime start)
         {
             throw new NotImplementedException();
         }
