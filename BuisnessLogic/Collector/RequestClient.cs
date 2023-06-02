@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 
-namespace BuisnessLogic.Requester
+namespace BuisnessLogic.Collector
 {
     internal class RequestClient
     {
@@ -15,11 +15,11 @@ namespace BuisnessLogic.Requester
         {
             using (HttpResponseMessage response = await Client.GetAsync(url))
             {
-                response.EnsureSuccessStatusCode();                 
+                response.EnsureSuccessStatusCode();
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 return jsonResponse;
-            }      
+            }
         }
     }
 }

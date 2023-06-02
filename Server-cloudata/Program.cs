@@ -1,12 +1,11 @@
-using BuisnessLogic.Requester;
+using BuisnessLogic.Collector;
+using BuisnessLogic.Model;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BuisnessLogic.Loggers;
 
 namespace Server_cloudata
 {
@@ -14,10 +13,22 @@ namespace Server_cloudata
     {
         public static void Main(string[] args)
         {
-            //NodeExporter nodeExporter = new NodeExporter();
-            //string cpuResults = nodeExporter.GetCpu();
-            //string memoryResults = nodeExporter.GetMemory();
-            CreateHostBuilder(args).Build().Run();
+            //var host = CreateHostBuilder(args).Build();
+
+            //var logger = host.Services.GetRequiredService<ILogger<Machine>>();
+            //logger.LogInformation("Host created.");
+            try
+            {
+                //Machine machine = new Machine();
+                //machine.CollectInformation();
+                //machine.PredictData();
+                //string memoryResults = nodeExporter.GetMemory();
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Error(ex.Message + Environment.NewLine + ex.StackTrace);
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -25,6 +36,7 @@ namespace Server_cloudata
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                /*.ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Information)*/;
     }
 }
