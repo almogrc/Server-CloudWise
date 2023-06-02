@@ -8,8 +8,10 @@ namespace Server_cloudata.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        [BsonElement("id")]
         public string? Id { get; set; }
+
+        [BsonElement("id")]
+        public int CustomerId { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
@@ -18,7 +20,7 @@ namespace Server_cloudata.Models
         public string Email { get; set; } = null!;
 
         [BsonElement("password")]
-        public string Password { get; set; } = null!;
+        public int Password { get; set; }
     }
 }
 

@@ -13,29 +13,19 @@ namespace Server_cloudata.Controllers
     [Route("api/[controller]")]
     public class CustomersController : Controller
     {
-        public IActionResult Index()
+        /*public IActionResult Index()
         {
             return View();
-        }
+        }*/
 
         private readonly CustomersService _customersService;
 
         public CustomersController(CustomersService customersService) =>
             _customersService = customersService;
 
-        /*[HttpGet]
-        public async Task<List<Customer>> Get() =>
-            await _customersService.GetAsync();*/
         [HttpGet]
-        public IEnumerable<Customer> Get()
-        {
-            var client = new MongoClient("mongodb+srv://chenklausner:jJFb5JKzsQ59Z8Zt@cluster0.ub7ocqo.mongodb.net/?retryWrites=true&w=majority");
-            var dataBase = client.GetDatabase("customers");
-            var collection = dataBase.GetCollection<Customer>("users");
-
-            
-            return collection.Find(s => s.Name == "chen klausner").ToList();
-        }
+        public async Task<List<Customer>> Get() =>
+            await _customersService.GetAsync();
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Customer>> Get(string id)
