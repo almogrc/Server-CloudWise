@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Enums
 {
-    public enum MemoryType
+    public enum eMemoryType
     {
         Virtual,
         Swapped,

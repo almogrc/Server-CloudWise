@@ -25,14 +25,34 @@ namespace BuisnessLogic.Algorithms
         public void Predict()
         { 
             IDataView dataView = _context.Data.LoadFromEnumerable(_data);
+            
             var pipline = _context.Forecasting.ForecastBySsa(
                 "Forecast",
                 "Value",
-                windowSize: 5,
-                seriesLength: _data.Count,
-                trainSize: 100,
-                horizon: 10
-               );
+                windowSize: (int)(_data.Count * 0.07),
+                seriesLength: (int)(_data.Count * 0.8), 
+                trainSize: (int)(_data.Count * 0.6), 
+                horizon: (int)(_data.Count * 0.2));
+            //var pipline = _context.Forecasting.ForecastBySamira(
+            //     "Forecast",
+            //     "Value",
+            //     windowSize: (int)(_data.Count * 0.07),
+            //     seriesLength: (int)(_data.Count * 0.8),
+            //     trainSize: (int)(_data.Count * 0.6),
+            //     horizon: (int)(_data.Count * 0.2));
+
+           // var arimaPipeline = pipline.ReplaceEstimator("Forecast", _context.Transforms.Forecasting.ForecastBySarima
+           //     ("Value", windowSize: 5, seriesLength: (int)(_data.Count * 0.7),
+           //     trainSize: (int)(_data.Count * 0.3), 
+           //     horizon: (int)(_data.Count * 0.2)));
+            //var pipline = _context.Forecasting.ForecastBySsa(
+            //    "Forecast",
+            //    "Value",
+            //    windowSize: 100,
+            //    seriesLength: _data.Count,
+            //    trainSize: _data.Count,
+            //    horizon: (int)(_data.Count*0.2)
+            //   );
             var model = pipline.Fit(dataView);
             using (var forcastingEngine = model.CreateTimeSeriesEngine<DataPoint, DataPointForcast>(_context))
             {

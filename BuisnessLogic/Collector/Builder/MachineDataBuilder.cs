@@ -10,36 +10,35 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Builder
 {
-    internal class MachineDataBuilder : IBuilder<MachineData>
+    internal class MachineDataBuilder : IBuilder<NodeData, eNodeExporterData>
     {
-        private MachineData _machineData;
-        public Dictionary<NodeExporterData, string> DataToConvert { get; set; }
+        private NodeData _nodeData;
+        public Dictionary<eNodeExporterData, string> DataToConvert { get; set; }
         public MachineDataBuilder()
         {
-            _machineData = new MachineData();
+            _nodeData = new NodeData();
+            DataToConvert = new Dictionary<eNodeExporterData, string>();
         }
         public void Build()
         {
             LinkedList<DataPoint> usageValues;
-            foreach (NodeExporterData nodeExporeterData in DataToConvert.Keys)
+            foreach (eNodeExporterData nodeExporeterData in DataToConvert.Keys)
             {
                 usageValues = ConvertJsonToData(DataToConvert[nodeExporeterData]);
-                _machineData.Data[nodeExporeterData] = usageValues;
+                _nodeData.Data[nodeExporeterData] = usageValues;
             }
         }
-
         private LinkedList<DataPoint> ConvertJsonToData(string jsonString)
         {
             var json = convertToJsonAndCheckValidation(jsonString);
             var values = json.First["values"];
             LinkedList<DataPoint> usageValues = convertUsage(values);
             return usageValues;
-
         }
         LinkedList<DataPoint> convertUsage(dynamic values)
         {
             //to check
-            LinkedList<DataPoint> dateTimeToMemoryUsage = new LinkedList<DataPoint>();
+            LinkedList<DataPoint> dateTimeToUsage = new LinkedList<DataPoint>();
             DateTime dateTime;
             float usageValue;
             foreach (var value in values)
@@ -50,10 +49,10 @@ namespace BuisnessLogic.Collector.Builder
                     throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("double",
                            value.Last.Value.ToString()));
                 }
-                dateTimeToMemoryUsage.AddFirst(new DataPoint { Date = dateTime, Value = usageValue });
+                dateTimeToUsage.AddLast(new DataPoint { Date = dateTime, Value = usageValue });
             }
 
-            return dateTimeToMemoryUsage;
+            return dateTimeToUsage;
         }
         private DateTime unixSecondsToDateTime(long timestamp, bool local = false)
         {
@@ -70,9 +69,21 @@ namespace BuisnessLogic.Collector.Builder
             json = json["data"]["result"];
             return json;
         }
-        public MachineData GetResult()
+        public NodeData GetResult()
         {
-            return _machineData;
+            return _nodeData;
+        }
+        public void Build(eNodeExporterData eData)
+        {
+            LinkedList<DataPoint> usageValues;
+            usageValues = ConvertJsonToData(DataToConvert[eData]);
+            _nodeData.Data[eData] = usageValues;
+        }
+        public NodeData GetResult(eNodeExporterData eData)
+        {
+            NodeData specifiecData = new NodeData();
+            specifiecData.Data.Add(eData, _nodeData.Data[eData]);
+            return specifiecData; 
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace BuisnessLogic.Extentions
 {
-    using BuisnessLogic.Collector.Enums;
+    using BuisnessLogic.Collector.Enums.Atributes;
     using System;
     using System.Collections.Generic;
     using System.Linq;

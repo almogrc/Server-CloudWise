@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Enums
 {
-    public enum CPUMode
+    public enum eExporterType
     {
-        user,
-        system
+        node = 0,
+        process = 1
     }
 }

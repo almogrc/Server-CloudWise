@@ -1,4 +1,4 @@
-﻿namespace BuisnessLogic.Collector.Enums
+﻿namespace BuisnessLogic.Collector.Enums.Atributes
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,7 @@
 
     public class QueryValueAttribute : Attribute
     {
-        public string Value { get; }
+        public string Value { get; set; }
 
         public QueryValueAttribute(string value)
         {

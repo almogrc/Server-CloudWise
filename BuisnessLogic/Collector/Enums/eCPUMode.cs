@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Enums
 {
-    public enum NodeExporterData
+    public enum eCPUMode
     {
-        [QueryValue("node_memory_MemAvailable_bytes")]
-        AvailabeBytes
+        user,
+        system
     }
 }

@@ -12,33 +12,33 @@ using BuisnessLogic.Model;
 
 namespace BuisnessLogic.Collector.ProcessExporter
 {
-    internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups> // composer
+    internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups, eProcessExporterData> // composer
     {
-        private Dictionary<ProcessExporeterData, string> _data { get; } = new Dictionary<ProcessExporeterData, string>();
+        private Dictionary<eProcessExporterData, string> _data { get; } = new Dictionary<eProcessExporterData, string>();
         private GroupBuilder _groupBuilder = new GroupBuilder();
-        public IBuilder<Groups> Builder => _groupBuilder;
+        public IBuilder<Groups, eProcessExporterData> Builder => _groupBuilder;
 
         public ProcessExporterCollector():base("9256")
         {       
         }
 
-        public string CPUQuery(string groupName, CPUMode cpuMode = CPUMode.user)
+        public string CPUQuery(string groupName, eCPUMode cpuMode = eCPUMode.user)
         {
             return $"namedprocess_namegroup_cpu_seconds_total{{groupname=\"{groupName}\",mode=\"{cpuMode}\",instance=\"{Instance}\"}}";
         }
-        public string MemoryQuery(string groupName, MemoryType memoryType = MemoryType.Resident)
+        public string MemoryQuery(string groupName, eMemoryType memoryType = eMemoryType.Resident)
         {
             return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         }
        
-        public string AllDataQuery(ProcessExporeterData processExporeterDataType)
+        public string AllDataQuery(eProcessExporterData processExporeterDataType)
         {
             return $"{processExporeterDataType.GetStringValue()}{{instance=\"{Instance}\"}}";
         }
 
         public void Collect()
         {
-            foreach (ProcessExporeterData processExporeterData in Enum.GetValues(typeof(ProcessExporeterData)))
+            foreach (eProcessExporterData processExporeterData in Enum.GetValues(typeof(eProcessExporterData)))
             {
                 Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(AllDataQuery(processExporeterData),
                     DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
@@ -48,15 +48,16 @@ namespace BuisnessLogic.Collector.ProcessExporter
             _groupBuilder.DataToConvert = _data;
             Builder.Build();
         }
-        private void sendRequestAndUpdateData(string url, ProcessExporeterData processExporeterData)
+        private void sendRequestAndUpdateData(string url, eProcessExporterData processExporeterData)
         {
             //send request
             string result = _client.GetAsync(url).Result;
             //update map
             _data[processExporeterData] = result;
 
-        }      
-        public void Collect(string information)
+        }
+
+        public void Collect(eProcessExporterData query, DateTime start)
         {
             throw new NotImplementedException();
         }

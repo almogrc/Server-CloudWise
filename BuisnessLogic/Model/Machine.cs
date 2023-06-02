@@ -12,24 +12,66 @@ namespace BuisnessLogic.Model
 {
     public class Machine
     {
-        public Machine()
+        private Machine()
         {
             MachineDataManager = new MachineDataManager();
             CollectManager = new CollectManager();
             Logger.Instance.Info($"Machine created.");
         }
-
+        private static Machine _machine;
+        private static object _machineLock = new object();
+        public static Machine MachineInstance
+        {
+            get {
+                if (_machine == null)
+                {
+                    lock( _machineLock )
+                    {
+                        if(_machine == null)
+                        {
+                            _machine = new Machine();
+                        }
+                    }
+                }
+                return _machine;
+            }
+        }
         public string IP { get; }
         internal MachineDataManager MachineDataManager { get; private set; }
         internal CollectManager CollectManager { get; private set; }
-
+        public LinkedList<DataPoint> GetData(string exporterType, string query, DateTime start)
+        {
+            eExporterType exporter;
+            if(!Enum.TryParse(exporterType, true, out exporter)) { throw new Exception("can't parse exporter"); }
+            LinkedList<DataPoint> result;
+            if(exporter == eExporterType.node)
+            {
+                eNodeExporterData eNodeExporter;
+                if (!Enum.TryParse(query, true, out eNodeExporter)) { throw new Exception($"can't parse {query} to enum {"eNodeExporterData"}"); }
+                CollectManager.nodeExporter.Collect(eNodeExporter, start);
+                MachineDataManager.NodeData.Data[eNodeExporter] = CollectManager.nodeExporter
+                    .Builder.GetResult(eNodeExporter).Data[eNodeExporter];
+                result = MachineDataManager.NodeData.Data[eNodeExporter];
+            }
+            else // processExporter
+            {
+                result = new LinkedList<DataPoint>();
+                eProcessExporterData eProcessExporter;
+                if (!Enum.TryParse(query, true, out eProcessExporter)) { throw new Exception($"can't parse {query} to enum {"eProcessExporter"}"); }
+                CollectManager.processExporter.Collect(eProcessExporter, start);
+                //MachineDataManager.NodeData.Data.Add(eProcessExporter, CollectManager.processExporter.Builder.GetResult(eProcessExporter).Data[eProcessExporter]);
+            }
+            PredictData predictData = PredictForcasting(result);
+            predictData._foreCasts.ForEach(dataPoint=>result.AddLast(dataPoint));
+            return result;
+        }
         public void CollectInformation()
         {
             try
             {
                 CollectManager.nodeExporter.Collect();
                 CollectManager.processExporter.Collect();
-                MachineDataManager.MachineData = CollectManager.nodeExporter.Builder.GetResult();
+                MachineDataManager.NodeData = CollectManager.nodeExporter.Builder.GetResult();
                 MachineDataManager.Groups = CollectManager.processExporter.Builder.GetResult();
             }
             catch (UnexpectedTypeException utex)
@@ -45,17 +87,15 @@ namespace BuisnessLogic.Model
                 Logger.Instance.Error(ex.Message + Environment.NewLine + ex.StackTrace);
             }
         }
-        public PredictData PredictForcasting()
+        public PredictData PredictForcasting(LinkedList<DataPoint> dataPointToPredict)
         {
-            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
-            data.Reverse();
-            TimeSeriesForecating algo = new TimeSeriesForecating(data);
+            TimeSeriesForecating algo = new TimeSeriesForecating(dataPointToPredict);
             algo.Predict();
-            return new PredictData(algo.Result, 60, data.Last().Date);
+            return new PredictData(algo.Result, dataPointToPredict.Last().Date);
         }
         public LinearRegressionData LinearRegression()
         {
-            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[CPUMode.user];
+            LinkedList<DataPoint> data = MachineDataManager.Groups.GroupNameToGroupData["prometheus"].CpuUsage[eCPUMode.user];
             List<double> independetVariable = new List<double>();
             List<double> dependentVariable = new List<double>();
             double i = 1;

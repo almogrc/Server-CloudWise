@@ -14,14 +14,16 @@ namespace Server_cloudata.Controllers
         //ProcessExporter agent = new ProcessExporter();
         //// GET: api/TodoItems
         //
-        [HttpGet("cpu")]
+        [HttpGet("Ram")]
         public IActionResult GetCpuUsage()
         {
-            Machine machine = new Machine();
-            machine.CollectInformation();
-            PredictData predict = machine.PredictForcasting();
-            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(predict));
+            //Machine machine = new Machine();
+            //machine.CollectInformation();
+            //PredictData predict = machine.PredictForcasting();
+            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(""));
         }
+       // [HttpGet("RamUsagePredict")]
+
         //[HttpGet("memory")]
         //public IActionResult GetMemoryUsage()
         //{       
