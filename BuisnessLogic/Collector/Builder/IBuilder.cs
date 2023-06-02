@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Builder
 {
-    interface IBuilder<T>
+    interface IBuilder<T,E>
     {
+        T GetResult(E eData);
         T GetResult();
         void Build();
+        void Build(E eData);
     }
 }

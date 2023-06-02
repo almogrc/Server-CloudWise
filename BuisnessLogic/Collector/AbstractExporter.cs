@@ -7,10 +7,10 @@ using BuisnessLogic.Collector.Prometheus;
 
 namespace BuisnessLogic.Collector
 {
-    public class AbstractExporter
+    internal class AbstractExporter
     {
         protected RequestClient _client;
-        public string Instance => $"{IP}:{Port}";
+        protected string Instance => $"{IP}:{Port}";
         protected string IP { get; private set; }
         protected string Port { get; private set; }
         protected PrometheusAPI _prometheusAPI;

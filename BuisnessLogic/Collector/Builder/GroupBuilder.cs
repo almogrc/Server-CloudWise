@@ -10,7 +10,7 @@ using BuisnessLogic.Exceptions;
 
 namespace BuisnessLogic.Collector.Builder
 {
-    internal class GroupBuilder : IBuilder<Groups>
+    internal class GroupBuilder : IBuilder<Groups, eProcessExporterData>
     {
         public Groups Groups { get; private set; }
         public Dictionary<eProcessExporterData, string> DataToConvert { get; set; }
@@ -158,6 +158,16 @@ namespace BuisnessLogic.Collector.Builder
         public Groups GetResult()
         {
             return Groups;
+        }
+
+        public void Build(eProcessExporterData eData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Groups GetResult(eProcessExporterData eData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

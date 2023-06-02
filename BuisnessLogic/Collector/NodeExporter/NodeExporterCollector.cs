@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.NodeExporter
 {
-    internal class NodeExporterCollector : AbstractExporter, ICollector<NodeData>
+    internal class NodeExporterCollector : AbstractExporter, ICollector<NodeData, eNodeExporterData>
     {
         private MachineDataBuilder _machineDataBuilder = new MachineDataBuilder();
-        public IBuilder<NodeData> Builder => _machineDataBuilder;
+        public IBuilder<NodeData, eNodeExporterData> Builder => _machineDataBuilder;
         public Dictionary<eNodeExporterData, string> _data;
         public NodeExporterCollector() : base("9100")
         {
@@ -30,8 +30,6 @@ namespace BuisnessLogic.Collector.NodeExporter
         {
             foreach (eNodeExporterData nodeExporeterData in Enum.GetValues(typeof(eNodeExporterData)))
             {
-
-
                 Uri url;
                 url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(nodeExporeterData), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
                 nodeExporeterData.GetStringValue();
@@ -55,17 +53,15 @@ namespace BuisnessLogic.Collector.NodeExporter
         }
         private void sendRequestAndUpdateData(string url, eNodeExporterData nodeExporeterData)
         {
+            //to do continue from here
             //send request
             string result = _client.GetAsync(url).Result;
             //update map
             _data[nodeExporeterData] = result;
         }
-        public void Collect(string query, DateTime start)
+        public void Collect(eNodeExporterData eNodeExporter, DateTime start)
         {
-            eNodeExporterData eNodeExporter;
-            if (!Enum.TryParse(query, true, out eNodeExporter)) { throw new Exception($"can't parse {query} to enum {"eNodeExporterData"}"); }
-
-            Uri url;
+            Uri url; 
             switch (eNodeExporter)
             {
                 case eNodeExporterData.AvailabeBytes:
@@ -83,6 +79,8 @@ namespace BuisnessLogic.Collector.NodeExporter
                     throw new Exception("not valid type");
             }
             sendRequestAndUpdateData(url.AbsoluteUri, eNodeExporter);
+            _machineDataBuilder.DataToConvert[eNodeExporter] = _data[eNodeExporter];
+            Builder.Build(eNodeExporter);
         }
     }
 }

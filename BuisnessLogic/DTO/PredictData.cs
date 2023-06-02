@@ -11,7 +11,7 @@ namespace BuisnessLogic.DTO
     public class PredictData
     {
         public List<DataPoint> _foreCasts;
-        public PredictData(float[] forecasts, int stepsInSeconds, DateTime lastDate) 
+        public PredictData(float[] forecasts, DateTime lastDate, int stepsInSeconds = 60) 
         { 
             _foreCasts = new List<DataPoint>();
             updateDateTimeForecasts(forecasts, stepsInSeconds, lastDate);

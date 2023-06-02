@@ -12,20 +12,17 @@ namespace Server_cloudata.Controllers.Queries
         [BindRequired]
         public string Exporter { get; set; }
         
-        [BindRequired]
-        public DateTime Start { get; set; }
-
         internal void CheckValidation()
         {
             eExporterType exporterType;
-            if(!Enum.TryParse(Exporter.ToLower(), out exporterType))
+            if(!Enum.TryParse(Exporter, true, out exporterType))
             {
                 throw new Exception($"Exporter : {Exporter} invalid parameter");
             }
             if(exporterType == eExporterType.node)
             {
                 eNodeExporterData nodeExporterData;
-                if (!Enum.TryParse(Query.ToLower(), out nodeExporterData))
+                if (!Enum.TryParse(Query, true, out nodeExporterData))
                 {
                     throw new Exception($"Query : {Query} invalid parameter");
                 }
@@ -33,7 +30,7 @@ namespace Server_cloudata.Controllers.Queries
             else
             {
                 eProcessExporterData processExporterData;
-                if (!Enum.TryParse(Query.ToLower(), out processExporterData))
+                if (!Enum.TryParse(Query, true, out processExporterData))
                 {
                     throw new Exception($"Query : {Query} invalid parameter");
                 }

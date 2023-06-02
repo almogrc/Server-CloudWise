@@ -14,6 +14,5 @@ namespace BuisnessLogic.Model
         {
             Data = new Dictionary<eNodeExporterData, LinkedList<DataPoint>>();
         }
-
     }
 }

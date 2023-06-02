@@ -12,11 +12,11 @@ using BuisnessLogic.Model;
 
 namespace BuisnessLogic.Collector.ProcessExporter
 {
-    internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups> // composer
+    internal class ProcessExporterCollector : AbstractExporter, ICollector<Groups, eProcessExporterData> // composer
     {
         private Dictionary<eProcessExporterData, string> _data { get; } = new Dictionary<eProcessExporterData, string>();
         private GroupBuilder _groupBuilder = new GroupBuilder();
-        public IBuilder<Groups> Builder => _groupBuilder;
+        public IBuilder<Groups, eProcessExporterData> Builder => _groupBuilder;
 
         public ProcessExporterCollector():base("9256")
         {       
@@ -57,7 +57,7 @@ namespace BuisnessLogic.Collector.ProcessExporter
 
         }
 
-        public void Collect(string query, DateTime start)
+        public void Collect(eProcessExporterData query, DateTime start)
         {
             throw new NotImplementedException();
         }
