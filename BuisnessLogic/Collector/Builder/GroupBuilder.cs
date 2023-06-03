@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BuisnessLogic.Collector.Enums;
 using Newtonsoft.Json;
 using BuisnessLogic.Exceptions;
+using System.Xml.Linq;
 
 namespace BuisnessLogic.Collector.Builder
 {
@@ -28,7 +29,7 @@ namespace BuisnessLogic.Collector.Builder
                     case eProcessExporterData.cpu:
                         convertJsonCpuDataToGroup(DataToConvert[processExporeterData]);
                         break;
-                    case eProcessExporterData.memory:
+                    case eProcessExporterData.proportionalMemoryResident:
                         convertJsonMemoryDataToGroup(DataToConvert[processExporeterData]);
                         break;
                     default:
@@ -36,6 +37,26 @@ namespace BuisnessLogic.Collector.Builder
                             processExporeterData.ToString()));
                 }
             }
+        }
+
+        public void Build(eProcessExporterData eData)
+        {
+            LinkedList<DataPoint> usageValues;
+            ConvertJsonToDataAndUpdateGroup(eData);
+        }
+
+        private void ConvertJsonToDataAndUpdateGroup(eProcessExporterData eData)
+        {
+            var json = convertToJsonAndCheckValidation(DataToConvert[eData]);
+            json = json.First;
+            string name = json["metric"]["groupname"];
+            var values = json["values"];
+            LinkedList<DataPoint> usageValues = convertUsage(values);
+            if (!Groups.GroupNameToGroupData.ContainsKey(name))
+            {
+                Groups.GroupNameToGroupData[name] = new Group(name);
+            }
+            Groups.GroupNameToGroupData[name].Data[eData] = usageValues;
         }
 
         private void convertJsonCpuDataToGroup(string jsonCpuUsage)
@@ -88,7 +109,7 @@ namespace BuisnessLogic.Collector.Builder
             groupToUpdate.CpuUsage.Add(cpuType, dateTimeToCpuUsage);
 
         }
-        void createOrUpdateGroupMemoryUsage(string name, string memType, dynamic values) 
+        void createOrUpdateGroupMemoryUsage(string name, string memType, dynamic values)
         {
             Group groupToUpdate;
             eMemoryType memoryType = convertFromStringToMemoryType(memType);
@@ -113,16 +134,16 @@ namespace BuisnessLogic.Collector.Builder
             LinkedList<DataPoint> dateTimeToMemoryUsage = new LinkedList<DataPoint>();
             DateTime dateTime;
             float usageValue;
-            foreach(var value in values)
+            foreach (var value in values)
             {
                 dateTime = unixSecondsToDateTime((long)value.First.Value);
-                if(!float.TryParse(value.Last.Value, out usageValue))
+                if (!float.TryParse(value.Last.Value, out usageValue))
                 {
                     throw new UnexpectedTypeException(UnexpectedTypeException.BuildMessage("double",
                            value.Last.Value.ToString()));
                 }
-               
-                dateTimeToMemoryUsage.AddFirst(new DataPoint { Date = dateTime, Value = usageValue });
+
+                dateTimeToMemoryUsage.AddLast(new DataPoint { Date = dateTime, Value = usageValue });
             }
 
             return dateTimeToMemoryUsage;
@@ -150,7 +171,7 @@ namespace BuisnessLogic.Collector.Builder
             return result;
         }
         private DateTime unixSecondsToDateTime(long timestamp, bool local = false)
-        {  
+        {
             var offset = DateTimeOffset.FromUnixTimeSeconds(timestamp);
             return local ? offset.LocalDateTime : offset.UtcDateTime;
         }
@@ -160,14 +181,11 @@ namespace BuisnessLogic.Collector.Builder
             return Groups;
         }
 
-        public void Build(eProcessExporterData eData)
+        public Groups GetResult(eProcessExporterData eData, params string[] values)
         {
-            throw new NotImplementedException();
-        }
-
-        public Groups GetResult(eProcessExporterData eData)
-        {
-            throw new NotImplementedException();
+            Groups groups = new Groups();
+            groups.GroupNameToGroupData[values[0]] = Groups.GroupNameToGroupData[values[0]];
+            return Groups;
         }
     }
 }
