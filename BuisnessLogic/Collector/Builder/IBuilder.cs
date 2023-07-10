@@ -8,7 +8,7 @@ namespace BuisnessLogic.Collector.Builder
 {
     interface IBuilder<T,E>
     {
-        T GetResult(E eData);
+        T GetResult(E eData, params string[] values);
         T GetResult();
         void Build();
         void Build(E eData);

@@ -21,7 +21,11 @@ namespace BuisnessLogic.Collector.Enums
         MemBuffersBytes,
         [QueryValue("node_memory_SReclaimable_bytes")]
         MemSRecliamableBytes,
-        [QueryValue($"eNode")]
-        RamUsage
+        [QueryValue($"RamUsage")]
+        RamUsage,
+        [QueryValue("node_network_receive_bytes_total")]
+        NetworkRecBytes,
+        [QueryValue("node_network_transmit_bytes_total")]
+        NetworkTransmitBytes
     }
 }

@@ -12,6 +12,8 @@ namespace BuisnessLogic.Collector.Enums
         [QueryValue("namedprocess_namegroup_cpu_seconds_total")]
         cpu,
         [QueryValue("namedprocess_namegroup_memory_bytes")]
-        memory 
+        proportionalMemoryResident,
+        [QueryValue("namedprocess_namegroup_read_bytes_total")]
+        readBytes
     }
 }

@@ -22,9 +22,9 @@ namespace BuisnessLogic.Collector.NodeExporter
             _data = new Dictionary<eNodeExporterData, string>();
         }
 
-        public string BuildQuery(eNodeExporterData nodeExporeterData)
+        public string BuildQuery(eNodeExporterData nodeExporeterData, string param="")
         {
-            return $"{nodeExporeterData.GetStringValue()}{{instance=\"{Instance}\"}}";
+            return $"{nodeExporeterData.GetStringValue()}{{instance=\"{Instance}\"{param}}}";
         }
         public void Collect()
         {
@@ -59,7 +59,7 @@ namespace BuisnessLogic.Collector.NodeExporter
             //update map
             _data[nodeExporeterData] = result;
         }
-        public void Collect(eNodeExporterData eNodeExporter, DateTime start)
+        public void Collect(eNodeExporterData eNodeExporter, DateTime start, params string[] values)
         {
             Uri url; 
             switch (eNodeExporter)
@@ -74,6 +74,10 @@ namespace BuisnessLogic.Collector.NodeExporter
                     break;
                 case eNodeExporterData.RamUsage:
                     url = _prometheusAPI.BuildUrlQueryRange($"{BuildQuery(eNodeExporterData.MemTotalBytes)}-{BuildQuery(eNodeExporterData.MemFreeBytes)}-{BuildQuery(eNodeExporterData.MemCachedBytes)}-{BuildQuery(eNodeExporterData.MemBuffersBytes)}-{BuildQuery(eNodeExporterData.MemSRecliamableBytes)}", start, DateTime.UtcNow);
+                    break;
+                case eNodeExporterData.NetworkRecBytes:
+                case eNodeExporterData.NetworkTransmitBytes:
+                    url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(eNodeExporter, ",device=\"eth0\""), start, DateTime.UtcNow);
                     break;
                 default:
                     throw new Exception("not valid type");

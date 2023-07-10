@@ -18,8 +18,8 @@ namespace BuisnessLogic.Collector.ProcessExporter
         private GroupBuilder _groupBuilder = new GroupBuilder();
         public IBuilder<Groups, eProcessExporterData> Builder => _groupBuilder;
 
-        public ProcessExporterCollector():base("9256")
-        {       
+        public ProcessExporterCollector() : base("9256")
+        {
         }
 
         public string CPUQuery(string groupName, eCPUMode cpuMode = eCPUMode.user)
@@ -30,17 +30,17 @@ namespace BuisnessLogic.Collector.ProcessExporter
         {
             return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         }
-       
-        public string AllDataQuery(eProcessExporterData processExporeterDataType)
+
+        public string BuildQuery(eProcessExporterData processExporeterDataType, string parms="")
         {
-            return $"{processExporeterDataType.GetStringValue()}{{instance=\"{Instance}\"}}";
+            return $"{processExporeterDataType.GetStringValue()}{{instance=\"{Instance}\"{parms}}}";
         }
 
         public void Collect()
         {
             foreach (eProcessExporterData processExporeterData in Enum.GetValues(typeof(eProcessExporterData)))
             {
-                Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(AllDataQuery(processExporeterData),
+                Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(BuildQuery(processExporeterData),
                     DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
 
                 sendRequestAndUpdateData(url.AbsoluteUri, processExporeterData);
@@ -57,9 +57,27 @@ namespace BuisnessLogic.Collector.ProcessExporter
 
         }
 
-        public void Collect(eProcessExporterData query, DateTime start)
+        public void Collect(eProcessExporterData ProcessExporterData, DateTime start, params string[] values)
         {
-            throw new NotImplementedException();
+            Uri url;
+            switch (ProcessExporterData)
+            {
+                case eProcessExporterData.cpu:
+                    //to delete
+                    url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(ProcessExporterData, $",groupname=\"{values[0]}\",memtype=\"{eMemoryType.proportionalResident}\""), start, DateTime.UtcNow);
+                    break;
+                case eProcessExporterData.proportionalMemoryResident:
+                    url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(ProcessExporterData, $",groupname=\"{values[0]}\",memtype=\"{eMemoryType.proportionalResident}\""), start, DateTime.UtcNow);
+                    break;
+                case eProcessExporterData.readBytes:
+                    url = _prometheusAPI.BuildUrlQueryRangeWithRate(BuildQuery(ProcessExporterData, $",groupname=\"{values[0]}\""), start, DateTime.UtcNow);
+                    break;
+                default:
+                    throw new Exception("unknow type");
+            }
+            sendRequestAndUpdateData(url.AbsoluteUri, ProcessExporterData);
+            _groupBuilder.DataToConvert = _data;
+            Builder.Build(ProcessExporterData);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace BuisnessLogic.Model
         public string IP { get; }
         internal MachineDataManager MachineDataManager { get; private set; }
         internal CollectManager CollectManager { get; private set; }
-        public LinkedList<DataPoint> GetData(string exporterType, string query, DateTime start)
+        public LinkedList<DataPoint> GetData(string exporterType, string query, DateTime start, params string[] values)
         {
             eExporterType exporter;
             if(!Enum.TryParse(exporterType, true, out exporter)) { throw new Exception("can't parse exporter"); }
@@ -48,7 +48,7 @@ namespace BuisnessLogic.Model
             {
                 eNodeExporterData eNodeExporter;
                 if (!Enum.TryParse(query, true, out eNodeExporter)) { throw new Exception($"can't parse {query} to enum {"eNodeExporterData"}"); }
-                CollectManager.nodeExporter.Collect(eNodeExporter, start);
+                CollectManager.nodeExporter.Collect(eNodeExporter, start, values);
                 MachineDataManager.NodeData.Data[eNodeExporter] = CollectManager.nodeExporter
                     .Builder.GetResult(eNodeExporter).Data[eNodeExporter];
                 result = MachineDataManager.NodeData.Data[eNodeExporter];
@@ -58,8 +58,20 @@ namespace BuisnessLogic.Model
                 result = new LinkedList<DataPoint>();
                 eProcessExporterData eProcessExporter;
                 if (!Enum.TryParse(query, true, out eProcessExporter)) { throw new Exception($"can't parse {query} to enum {"eProcessExporter"}"); }
-                CollectManager.processExporter.Collect(eProcessExporter, start);
-                //MachineDataManager.NodeData.Data.Add(eProcessExporter, CollectManager.processExporter.Builder.GetResult(eProcessExporter).Data[eProcessExporter]);
+                CollectManager.processExporter.Collect(eProcessExporter, start, values);
+                if (!MachineDataManager.Groups.GroupNameToGroupData.ContainsKey(values[0]))
+                {
+                    MachineDataManager.Groups.GroupNameToGroupData.
+                        Add(values[0], CollectManager.processExporter.Builder.GetResult(eProcessExporter, values[0]).GroupNameToGroupData[values[0]]);
+                }
+                else
+                {
+                    MachineDataManager.Groups.GroupNameToGroupData[values[0]].Data[eProcessExporter] = 
+                        CollectManager.processExporter.Builder.GetResult(eProcessExporter, values[0]).GroupNameToGroupData[values[0]]
+                        .Data[eProcessExporter];
+                }
+
+                result = MachineDataManager.Groups.GroupNameToGroupData[values[0]].Data[eProcessExporter];
             }
             PredictData predictData = PredictForcasting(result);
             predictData._foreCasts.ForEach(dataPoint=>result.AddLast(dataPoint));
