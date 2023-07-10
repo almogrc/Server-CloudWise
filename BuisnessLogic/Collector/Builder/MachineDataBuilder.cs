@@ -79,7 +79,7 @@ namespace BuisnessLogic.Collector.Builder
             usageValues = ConvertJsonToData(DataToConvert[eData]);
             _nodeData.Data[eData] = usageValues;
         }
-        public NodeData GetResult(eNodeExporterData eData)
+        public NodeData GetResult(eNodeExporterData eData, params string[] values)
         {
             NodeData specifiecData = new NodeData();
             specifiecData.Data.Add(eData, _nodeData.Data[eData]);

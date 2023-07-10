@@ -12,6 +12,6 @@ namespace BuisnessLogic.Collector
     {
         IBuilder<T, E> Builder { get; }
         void Collect();
-        void Collect(E query, DateTime start);
+        void Collect(E query, DateTime start, params string[] values);
     }
 }

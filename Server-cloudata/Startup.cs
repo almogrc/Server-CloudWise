@@ -32,6 +32,15 @@ namespace Server_cloudata
             //services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
             //services.AddSingleton<CustomersService>();
             services.AddLogging();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +61,7 @@ namespace Server_cloudata
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
