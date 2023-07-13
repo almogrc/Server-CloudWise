@@ -10,7 +10,8 @@ namespace Server_cloudata.Services
 {
     public class CustomersService
     {
-        private readonly IMongoCollection<Customer> _customersCollection;
+        public IMongoCollection<Customer> _customersCollection { private set; get; }
+
 
         public CustomersService(IOptions<CustomerDatabaseSettings> customerDatabaseSettings)
         {
@@ -29,6 +30,9 @@ namespace Server_cloudata.Services
 
         public async Task<Customer?> GetAsync(string id) =>
             await _customersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task<Customer?> GetAsyncByEmail(string email) =>
+            await _customersCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
 
         public async Task CreateAsync(Customer newCustomer) =>
             await _customersCollection.InsertOneAsync(newCustomer);

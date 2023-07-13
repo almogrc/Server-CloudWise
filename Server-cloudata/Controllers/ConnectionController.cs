@@ -1,6 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Server_cloudata.DTO;
+using Server_cloudata.Models;
+using Server_cloudata.Services;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Server_cloudata.Controllers
 {
@@ -8,41 +14,78 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class ConnectionController : Controller
     {
+        private readonly CustomersService _customersService;
+
+        public ConnectionController(CustomersService customersService) =>
+            _customersService = customersService;
+
+        [HttpGet]
+        public async Task<List<Customer>> Get() =>
+            await _customersService.GetAsync();
+
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO loginBody)    //query="ramusage" start end                  todo to handle clients
+        public async Task<IActionResult> LoginAsync([FromBody] LoginDTO loginBody)    //query="ramusage" start end                  todo to handle clients
         {
-            //get information from data base 
-            //check paswword and send relevent response
             try
             {
-                int x = 5;                
-                //update sessionId
-                return Ok("{\"name\" : \"guy\"}");
+                var customer = await _customersService.GetAsyncByEmail(loginBody.Email);
+
+                if (customer == null)
+                {
+                    // Email does not exist in the collection
+                    return NotFound("Email not found.");
+                }
+
+                if (customer.Password == loginBody.Password)
+                {
+                    // Password matches, successful login
+                    // Update sessionId or perform any other required actions
+                    return Ok(new { name = customer.Name }); // Return relevant response
+                }
+                else
+                {
+                    // Password does not match
+                    return Unauthorized("Incorrect password.");
+                }
             }
-            catch (Exception ex) // server's execptions and Buissnes logic
+            catch (Exception ex)
             {
-                return Conflict(ex); // todo
+                // Handle server exceptions and business logic errors
+                return StatusCode(500, ex.Message);
             }
         }
+
+
         [HttpPost("signUp")]
-        public IActionResult SignUp([FromBody] SignUpDTO signUpBody)    //query="ramusage" start end                  todo to handle clients
+        public async Task<IActionResult> SignUpAsync([FromBody] Customer signUpBody)
         {
-            //object for sign up
-            //check validation
-            //update database async
-            //send to client ok
             try
             {
+                // Check if the user already exists in the collection
+                var filter = Builders<Customer>.Filter.Or(
+                    Builders<Customer>.Filter.Eq("id", signUpBody.Id),
+                    Builders<Customer>.Filter.Eq("email", signUpBody.Email)
+                );
+                var existingUser = _customersService._customersCollection.Find(filter).FirstOrDefault();
 
-                int x = 5;
-                return Ok("{\"name\" : \"guy\"}");
+                if (existingUser != null)
+                {
+                    // User already exists, return appropriate error response
+                    return Conflict("User already exists");
+                }
+
+                // User does not exist, add the new user to the collection
+
+                await _customersService.CreateAsync(signUpBody);
+
+                // Return success response to the client
+                return Ok("User signed up successfully");
             }
-            catch (Exception ex) // server's execptions and Buissnes logic
+            catch (Exception ex)
             {
-                return Conflict(ex); // todo
+                // Handle any server exceptions or business logic errors
+                return Conflict(ex.Message);
             }
         }
-
-
     }
 }

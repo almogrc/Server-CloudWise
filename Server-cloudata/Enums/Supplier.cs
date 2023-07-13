@@ -5,6 +5,5 @@
         Azure,
         Aws,
         Google
-
     }
 }
