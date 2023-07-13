@@ -29,8 +29,8 @@ namespace Server_cloudata
             services.AddRazorPages();
 
             //~~~
-            //services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
-            //services.AddSingleton<CustomersService>();
+            services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
+            services.AddSingleton<CustomersService>();
             services.AddLogging();
             services.AddCors(options =>
             {

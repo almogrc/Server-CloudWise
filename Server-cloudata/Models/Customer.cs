@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -11,7 +12,7 @@ namespace Server_cloudata.Models
         public string? Id { get; set; }
 
         [BsonElement("id")]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
@@ -20,7 +21,10 @@ namespace Server_cloudata.Models
         public string Email { get; set; } = null!;
 
         [BsonElement("password")]
-        public int Password { get; set; }
+        public string Password { get; set; }
+
+        [BsonElement("virtualMachines")]
+        public List<VirtualMachine> VMs { get; set; }
     }
 }
 
