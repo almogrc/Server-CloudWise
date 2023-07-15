@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server_cloudata.Models;
 using Server_cloudata.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Session;
 
 namespace Server_cloudata
 {
@@ -41,6 +43,12 @@ namespace Server_cloudata
                            .AllowAnyHeader();
                 });
             });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(180);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,12 +64,13 @@ namespace Server_cloudata
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseSession();
+            app.UseMiddleware<Middleware.SessionMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseCors();
+            app.UseCors();          
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

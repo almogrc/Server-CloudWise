@@ -11,7 +11,7 @@ namespace Server_cloudata.Controllers
         {
             return View();
         }
-        [HttpPost("AddHost")]
+        [HttpPost("AddVM")]
         public IActionResult AddMachine([FromBody] NewMachineDTO newMachineDTO)
         {
             //update data base and check validation
