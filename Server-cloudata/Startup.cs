@@ -38,9 +38,10 @@ namespace Server_cloudata
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:3000") // Replace with your React app's origin
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials(); // Allow credentials (cookies)
                 });
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -65,14 +66,13 @@ namespace Server_cloudata
                 app.UseHsts();
             }
             app.UseSession();
-            app.UseMiddleware<Middleware.SessionMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
             app.UseCors();          
             app.UseAuthorization();
-
+            app.UseMiddleware<Middleware.SessionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(name: "default"

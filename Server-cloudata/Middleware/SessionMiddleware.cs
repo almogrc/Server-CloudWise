@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Amazon.Runtime.Internal;
 using System.IO;
+using Server_cloudata.ServerDataManager;
 
 namespace Server_cloudata.Middleware
 {
@@ -14,6 +15,8 @@ namespace Server_cloudata.Middleware
     {
         private RequestDelegate _requestDelegate;
         private IHttpContextAccessor _contextAccessor;
+        private readonly string _sessionCookie = "sessionCookie";
+
         public SessionMiddleware(RequestDelegate next, IHttpContextAccessor httpContextAccessor)
         {
             _requestDelegate = next;
@@ -23,7 +26,7 @@ namespace Server_cloudata.Middleware
         {
             if (RequestToLoginOrRegister(context))
             {
-                await _requestDelegate(context);
+                 await _requestDelegate(context);
             }
             else if (await CheckIfSessionExist(context)) 
             { 
@@ -40,12 +43,13 @@ namespace Server_cloudata.Middleware
 
         private async Task<bool> CheckIfSessionExist(HttpContext context)
         {
-            //var reader = new StreamReader(context.Request.Body);
-            //var bodyAsText = await reader.ReadToEndAsync();
-            //JObject body = JObject.Parse(bodyAsText);
-            //string sessionId = body["SessionId"].ToString();
+            string sessionId;
+            if(!context.Request.Cookies.TryGetValue(ServerDataManager.ServerDataManager.SessionCookie, out sessionId))
+            {
+                 return false;
+            }
             byte[] values;
-            if (_contextAccessor.HttpContext.Session.TryGetValue(_contextAccessor.HttpContext.Session.Id, out values))
+            if (_contextAccessor.HttpContext.Session.TryGetValue(sessionId, out values))
             {
                 return true;
             }
