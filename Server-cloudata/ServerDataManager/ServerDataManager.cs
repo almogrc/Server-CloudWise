@@ -4,6 +4,8 @@ namespace Server_cloudata.ServerDataManager
 {
     public class ServerDataManager
     {
-       // public Dictionary<string, HttpSessionState> 
+        public static string SessionCookie = "sessionCookie";
+       // public Dictionary<string, HttpSessionState>
+      // private Dictionary<string, > _
     }
 }

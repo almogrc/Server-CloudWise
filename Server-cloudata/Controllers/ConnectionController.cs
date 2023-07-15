@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Server_cloudata.DTO;
@@ -6,6 +8,7 @@ using Server_cloudata.Models;
 using Server_cloudata.Services;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Server_cloudata.Controllers
@@ -15,9 +18,13 @@ namespace Server_cloudata.Controllers
     public class ConnectionController : Controller
     {
         private readonly CustomersService _customersService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public ConnectionController(CustomersService customersService) =>
+        public ConnectionController(IHttpContextAccessor httpContextAccessor, CustomersService customersService)
+        {
             _customersService = customersService;
+            _contextAccessor = httpContextAccessor;
+        }
 
         [HttpGet]
         public async Task<List<Customer>> Get() =>
@@ -38,8 +45,8 @@ namespace Server_cloudata.Controllers
 
                 if (customer.Password == loginBody.Password)
                 {
-                    // Password matches, successful login
-                    // Update sessionId or perform any other required actions
+                    Response.Cookies.Append(ServerDataManager.ServerDataManager.SessionCookie, _contextAccessor.HttpContext.Session.Id);
+                    _contextAccessor.HttpContext.Session.SetString(_contextAccessor.HttpContext.Session.Id, loginBody.Email); // handle to save the session
                     return Ok(new { name = customer.Name }); // Return relevant response
                 }
                 else

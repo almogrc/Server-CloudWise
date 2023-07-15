@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server_cloudata.Models;
 using Server_cloudata.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Session;
 
 namespace Server_cloudata
 {
@@ -36,10 +38,17 @@ namespace Server_cloudata
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:3000") // Replace with your React app's origin
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials(); // Allow credentials (cookies)
                 });
+            });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(180);
             });
         }
 
@@ -56,14 +65,14 @@ namespace Server_cloudata
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseCors();
+            app.UseCors();          
             app.UseAuthorization();
-
+            app.UseMiddleware<Middleware.SessionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(name: "default"
