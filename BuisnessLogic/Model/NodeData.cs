@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Model
 {
-    internal class NodeData
+    public class NodeData
     {
         public Dictionary<eNodeExporterData, LinkedList<DataPoint>> Data { get; set; }
         public NodeData()

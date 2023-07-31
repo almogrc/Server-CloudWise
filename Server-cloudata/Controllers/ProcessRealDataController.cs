@@ -6,7 +6,7 @@ using System;
 
 namespace Server_cloudata.Controllers
 {
-    [Route("api")]
+    [Route("api/machine/[controller]")]
     [ApiController]
     public class ProcessRealDataController : Controller
     {
@@ -24,10 +24,10 @@ namespace Server_cloudata.Controllers
         {
             try
             {
-                queries.CheckValidation();
-                Machine machine = Machine.MachineInstance;
-                LinkedList<DataPoint> data = machine.GetData(queries.Exporter, queries.Query, Start, GroupName);
-                return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(data));
+               // queries.CheckValidation();
+               // Machine machine = Machine.MachineInstance;
+               // LinkedList<DataPoint> data = machine.GetData(queries.Exporter, queries.Query, Start, GroupName);
+               return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(""));
             }
             catch (Exception ex) // server's execptions and Buissnes logic
             {

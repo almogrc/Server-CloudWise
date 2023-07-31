@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Server_cloudata.DTO
 {
-    public class NewMachineDTO : BaseBody
+    public class NewMachineDTO
     {
         public string Name { get; set; }
         public Supplier Supplier { get; set; }

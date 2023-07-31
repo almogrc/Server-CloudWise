@@ -7,7 +7,7 @@ using System.Net.Http;
 
 namespace BuisnessLogic.Collector
 {
-    internal class RequestClient
+    public class RequestClient
     {
         private HttpClient Client = new HttpClient();
 

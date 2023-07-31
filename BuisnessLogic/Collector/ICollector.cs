@@ -8,10 +8,11 @@ using BuisnessLogic.Collector.Prometheus;
 
 namespace BuisnessLogic.Collector
 {
-    interface ICollector<T, E>
+    public interface ICollector<E>
     {
-        IBuilder<T, E> Builder { get; }
-        void Collect();
-        void Collect(E query, DateTime start, params string[] values);
+        //Task<string> BuildQuery(string query, DateTime from, DateTime to, string address, params string[] values)
+        //Task<string> Collect();
+        Task<string> Collect(string query, DateTime from, DateTime to, string address, params string[] values);
+        Task<string> Collect(string query, string address);
     }
 }
