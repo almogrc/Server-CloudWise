@@ -13,6 +13,13 @@ using Server_cloudata.Models;
 using Server_cloudata.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
+using BuisnessLogic.Collector.Enums;
+using BuisnessLogic.Model;
+using BuisnessLogic.Collector.NodeExporter;
+using BuisnessLogic.Collector;
+using Server_cloudata.Services.Collector;
+using Server_cloudata.Middleware;
+using BuisnessLogic.Collector.Builder;
 
 namespace Server_cloudata
 {
@@ -33,6 +40,9 @@ namespace Server_cloudata
             //~~~
             services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
             services.AddSingleton<CustomersService>();
+            services.AddTransient<ICollectorService<Metric>, NodeCollectorService>();
+            services.AddTransient<ICollector<eNodeExporterData>, NodeExporterCollector>();
+            services.AddTransient<IBuilder<List<DataPoint>>, DataPointsBuilder>();
             services.AddLogging();
             services.AddCors(options =>
             {
@@ -73,11 +83,11 @@ namespace Server_cloudata
             app.UseCors();          
             app.UseAuthorization();
             app.UseMiddleware<Middleware.SessionMiddleware>();
-            app.UseEndpoints(endpoints =>
+            app.UseWhen(context => context.Request.Path.StartsWithSegments("/api/machine"), appBuilder =>
             {
-                endpoints.MapControllerRoute(name: "default"
-                    , pattern: "{controller=Home}/{action=Index}/{id?}");
+                appBuilder.UseMiddleware<MachineMiddleware>();
             });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }

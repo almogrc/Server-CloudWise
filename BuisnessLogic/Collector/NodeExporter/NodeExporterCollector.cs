@@ -4,6 +4,7 @@ using BuisnessLogic.Collector.Prometheus;
 using BuisnessLogic.Exceptions;
 using BuisnessLogic.Extentions;
 using BuisnessLogic.Model;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,56 +13,26 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.NodeExporter
 {
-    internal class NodeExporterCollector : AbstractExporter, ICollector<NodeData, eNodeExporterData>
+    public class NodeExporterCollector : AbstractExporter, ICollector<eNodeExporterData>
     {
-        private MachineDataBuilder _machineDataBuilder = new MachineDataBuilder();
-        public IBuilder<NodeData, eNodeExporterData> Builder => _machineDataBuilder;
-        public Dictionary<eNodeExporterData, string> _data;
+       
         public NodeExporterCollector() : base("9100")
         {
-            _data = new Dictionary<eNodeExporterData, string>();
         }
-
-        public string BuildQuery(eNodeExporterData nodeExporeterData, string param="")
-        {
-            return $"{nodeExporeterData.GetStringValue()}{{instance=\"{Instance}\"{param}}}";
+        private readonly long GBInBytes = 1073741824;
+        private string AddInstanceToUrl(eNodeExporterData nodeExporeterData, string param="")
+        { 
+            return $"{nodeExporeterData.GetQueryValue()}{{instance=\"{Instance}\"{param}}}";
         }
-        public void Collect()
+        private async Task<string> BuildQuery(string query,DateTime from, DateTime to, string address, params string[] values)
         {
-            foreach (eNodeExporterData nodeExporeterData in Enum.GetValues(typeof(eNodeExporterData)))
+            Uri url;
+            IP = address;
+            eNodeExporterData eNodeExporter;
+            if (!Enum.TryParse(query, out eNodeExporter))
             {
-                Uri url;
-                url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(nodeExporeterData), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
-                nodeExporeterData.GetStringValue();
-                sendRequestAndUpdateData(url.AbsoluteUri, nodeExporeterData);
+                throw new Exception("can't parse");
             }
-            _machineDataBuilder.DataToConvert = _data;
-            //option 1:
-
-            Builder.Build();
-
-            //option 2:
-
-            //try
-            //{
-            //    Builder.Build();
-
-            //}catch(UnknownTypeException ex)
-            //{
-            //    throw ex;
-            //}
-        }
-        private void sendRequestAndUpdateData(string url, eNodeExporterData nodeExporeterData)
-        {
-            //to do continue from here
-            //send request
-            string result = _client.GetAsync(url).Result;
-            //update map
-            _data[nodeExporeterData] = result;
-        }
-        public void Collect(eNodeExporterData eNodeExporter, DateTime start, params string[] values)
-        {
-            Uri url; 
             switch (eNodeExporter)
             {
                 case eNodeExporterData.AvailabeBytes:
@@ -70,21 +41,51 @@ namespace BuisnessLogic.Collector.NodeExporter
                 case eNodeExporterData.MemCachedBytes:
                 case eNodeExporterData.MemBuffersBytes:
                 case eNodeExporterData.MemSRecliamableBytes:
-                    url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(eNodeExporter), start, DateTime.UtcNow);
+                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceToUrl(eNodeExporter), from, to);
                     break;
                 case eNodeExporterData.RamUsage:
-                    url = _prometheusAPI.BuildUrlQueryRange($"{BuildQuery(eNodeExporterData.MemTotalBytes)}-{BuildQuery(eNodeExporterData.MemFreeBytes)}-{BuildQuery(eNodeExporterData.MemCachedBytes)}-{BuildQuery(eNodeExporterData.MemBuffersBytes)}-{BuildQuery(eNodeExporterData.MemSRecliamableBytes)}", start, DateTime.UtcNow);
+                    url = _prometheusAPI.BuildUrlQueryRange
+                        ($"{AddInstanceToUrl(eNodeExporterData.MemTotalBytes)}/{GBInBytes}-{AddInstanceToUrl(eNodeExporterData.MemFreeBytes)}/{GBInBytes}-{AddInstanceToUrl(eNodeExporterData.MemCachedBytes)}/{GBInBytes}-{AddInstanceToUrl(eNodeExporterData.MemBuffersBytes)}/{GBInBytes}-{AddInstanceToUrl(eNodeExporterData.MemSRecliamableBytes)}/{GBInBytes}", from, to);
                     break;
                 case eNodeExporterData.NetworkRecBytes:
                 case eNodeExporterData.NetworkTransmitBytes:
-                    url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(eNodeExporter, ",device=\"eth0\""), start, DateTime.UtcNow);
+                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceToUrl(eNodeExporter, ",device=\"eth0\""), from, to);
+                    break;
+                case eNodeExporterData.CPUUsage:
+                    url = _prometheusAPI.BuildUrlQueryRange($"sum by(instance) ({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporter,", mode !=\"idle\""))}) / on(instance) group_left sum by (instance)({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporter))})*100", from, to);
+                    break;
+                case eNodeExporterData.Ram:
+                    url = _prometheusAPI.BuildUrlQuery($"{AddInstanceToUrl(eNodeExporter)}/{GBInBytes}");
                     break;
                 default:
                     throw new Exception("not valid type");
             }
-            sendRequestAndUpdateData(url.AbsoluteUri, eNodeExporter);
-            _machineDataBuilder.DataToConvert[eNodeExporter] = _data[eNodeExporter];
-            Builder.Build(eNodeExporter);
+            return url.AbsoluteUri;
         }
+        public async Task<string> Collect(string query, DateTime from, DateTime to, string address, params string[] values)
+        {
+            string url = await BuildQuery(query, from, to, address, values);
+            return await _client.GetAsync(url);
+        }
+
+        public async Task<string> Collect(string query, string address)
+        {
+            string url = await BuildQuery(query, DateTime.Now, DateTime.Now, address);
+            return await _client.GetAsync(url);
+        }
+
+        //public async Task<string> Collect()
+        //{
+        //    foreach (eNodeExporterData nodeExporeterData in Enum.GetValues(typeof(eNodeExporterData)))
+        //    {
+        //        Uri url;
+        //        url = _prometheusAPI.BuildUrlQueryRange(BuildQuery(nodeExporeterData), DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
+        //        nodeExporeterData.GetStringValue();
+        //        GetData(url.AbsoluteUri, nodeExporeterData);
+        //    }
+        //    //  _machineDataBuilder.DataToConvert = _data;
+        //
+        //    _builder.Build(""); //to handle
+        //}
     }
 }

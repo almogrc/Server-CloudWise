@@ -10,32 +10,22 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Builder
 {
-    internal class MachineDataBuilder : IBuilder<NodeData, eNodeExporterData>
+    public class DataPointsBuilder : IBuilder<List<DataPoint>>
     {
-        private NodeData _nodeData;
-        public Dictionary<eNodeExporterData, string> DataToConvert { get; set; }
-        public MachineDataBuilder()
+        public DataPointsBuilder()
         {
-            _nodeData = new NodeData();
-            DataToConvert = new Dictionary<eNodeExporterData, string>();
         }
-        public void Build()
+        public async Task<List<DataPoint>> Build(string dataToConvert)
         {
-            LinkedList<DataPoint> usageValues;
-            foreach (eNodeExporterData nodeExporeterData in DataToConvert.Keys)
-            {
-                usageValues = ConvertJsonToData(DataToConvert[nodeExporeterData]);
-                _nodeData.Data[nodeExporeterData] = usageValues;
-            }
+            return await ConvertJsonToData(dataToConvert);
         }
-        private LinkedList<DataPoint> ConvertJsonToData(string jsonString)
+        private async Task<List<DataPoint>> ConvertJsonToData(string jsonString)
         {
             var json = convertToJsonAndCheckValidation(jsonString);
             var values = json.First["values"];
-            LinkedList<DataPoint> usageValues = convertUsage(values);
-            return usageValues;
+            return convertUsage(values);
         }
-        LinkedList<DataPoint> convertUsage(dynamic values)
+        private List<DataPoint> convertUsage(dynamic values)
         {
             //to check
             LinkedList<DataPoint> dateTimeToUsage = new LinkedList<DataPoint>();
@@ -52,7 +42,7 @@ namespace BuisnessLogic.Collector.Builder
                 dateTimeToUsage.AddLast(new DataPoint { Date = dateTime, Value = usageValue });
             }
 
-            return dateTimeToUsage;
+            return dateTimeToUsage.ToList();
         }
         private DateTime unixSecondsToDateTime(long timestamp, bool local = false)
         {
@@ -68,22 +58,6 @@ namespace BuisnessLogic.Collector.Builder
             }
             json = json["data"]["result"];
             return json;
-        }
-        public NodeData GetResult()
-        {
-            return _nodeData;
-        }
-        public void Build(eNodeExporterData eData)
-        {
-            LinkedList<DataPoint> usageValues;
-            usageValues = ConvertJsonToData(DataToConvert[eData]);
-            _nodeData.Data[eData] = usageValues;
-        }
-        public NodeData GetResult(eNodeExporterData eData, params string[] values)
-        {
-            NodeData specifiecData = new NodeData();
-            specifiecData.Data.Add(eData, _nodeData.Data[eData]);
-            return specifiecData; 
         }
     }
 }

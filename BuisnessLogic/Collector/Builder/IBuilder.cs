@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Collector.Builder
 {
-    interface IBuilder<T,E>
+    public interface IBuilder<T>
     {
-        T GetResult(E eData, params string[] values);
-        T GetResult();
-        void Build();
-        void Build(E eData);
+        Task<T> Build(string dataToConvert);
     }
 }

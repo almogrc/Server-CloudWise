@@ -9,12 +9,21 @@
 
     public static class EnumExtensions
     {
-        public static string GetStringValue(this Enum value)
+        public static string GetQueryValue(this Enum value)
         {
             var attribute = value.GetType()
                 .GetField(value.ToString())
                 .GetCustomAttributes(typeof(QueryValueAttribute), false)
                 .SingleOrDefault() as QueryValueAttribute;
+
+            return attribute?.Value ?? string.Empty;
+        }
+        public static string GetTypeValue(this Enum value)
+        {
+            var attribute = value.GetType()
+                .GetField(value.ToString())
+                .GetCustomAttributes(typeof(TypeValueAttribute), false)
+                .SingleOrDefault() as TypeValueAttribute;
 
             return attribute?.Value ?? string.Empty;
         }
