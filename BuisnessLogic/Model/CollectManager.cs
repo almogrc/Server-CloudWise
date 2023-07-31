@@ -12,13 +12,13 @@ namespace BuisnessLogic.Model
 {
     internal class CollectManager
     {
-        internal ICollector<Groups, eProcessExporterData> processExporter { get; set; }
-        internal ICollector<NodeData, eNodeExporterData> nodeExporter { get; set; }
+        //internal ICollector<Groups, eProcessExporterData> processExporter { get; set; }
+        //internal ICollector<, eNodeExporterData> nodeExporter { get; set; }
         
         public CollectManager()
         {
-            processExporter = new ProcessExporterCollector();
-            nodeExporter = new NodeExporterCollector();
+            //processExporter = new ProcessExporterCollector();
+            //nodeExporter = new NodeExporterCollector();
         }
     }
 }

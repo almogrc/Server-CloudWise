@@ -44,7 +44,7 @@ namespace Server_cloudata.Middleware
         private async Task<bool> CheckIfSessionExist(HttpContext context)
         {
             string sessionId;
-            if(!context.Request.Cookies.TryGetValue(ServerDataManager.ServerDataManager.SessionCookie, out sessionId))
+            if(!context.Request.Cookies.TryGetValue(ServerDataManager.ServerUtils.SessionCookie, out sessionId))
             {
                  return false;
             }

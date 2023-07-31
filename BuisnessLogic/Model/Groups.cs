@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Model
 {
-    internal class Groups
+    public class Groups
     {
-        public Dictionary<string, Group> GroupNameToGroupData { get; private set; }
+        public Dictionary<string, List<DataPoint>> GroupNameToGroupData { get; private set; }
 
         public Groups()
         {
-            GroupNameToGroupData = new Dictionary<string, Group>();
+            GroupNameToGroupData = new Dictionary<string, List<DataPoint>>();
         }
     }
 }
