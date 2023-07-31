@@ -39,7 +39,6 @@ namespace Server_cloudata.Controllers
 
                 if (customer == null)
                 {
-                    // Email does not exist in the collection
                     return NotFound("Email not found.");
                 }
 
@@ -51,7 +50,6 @@ namespace Server_cloudata.Controllers
                 }
                 else
                 {
-                    // Password does not match
                     return Unauthorized("Incorrect password.");
                 }
             }
@@ -68,7 +66,6 @@ namespace Server_cloudata.Controllers
         {
             try
             {
-                // Check if the user already exists in the collection
                 var filter = Builders<Customer>.Filter.Or(
                     Builders<Customer>.Filter.Eq("id", signUpBody.Id),
                     Builders<Customer>.Filter.Eq("email", signUpBody.Email)
@@ -77,15 +74,11 @@ namespace Server_cloudata.Controllers
 
                 if (existingUser != null)
                 {
-                    // User already exists, return appropriate error response
                     return Conflict("User already exists");
                 }
 
-                // User does not exist, add the new user to the collection
-
                 await _customersService.CreateAsync(signUpBody);
 
-                // Return success response to the client
                 return Ok("User signed up successfully");
             }
             catch (Exception ex)

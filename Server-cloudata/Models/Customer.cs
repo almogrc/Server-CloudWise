@@ -24,7 +24,10 @@ namespace Server_cloudata.Models
         public string Password { get; set; }
 
         [BsonElement("virtualMachines")]
-        public List<VirtualMachine> VMs { get; set; }
+        public List<VirtualMachine> VMs { get; set; } = null!;
+
+        [BsonElement("alert")]
+        public List<Alert> Alerts { get; set; }
     }
 }
 

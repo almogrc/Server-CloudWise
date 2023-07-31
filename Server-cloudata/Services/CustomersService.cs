@@ -40,7 +40,16 @@ namespace Server_cloudata.Services
         public async Task UpdateAsync(string id, Customer updatedCustomer) =>
             await _customersCollection.ReplaceOneAsync(x => x.Id == id, updatedCustomer);
 
+        public async Task AddVMAsync(Customer updatedCustomer) =>
+            await _customersCollection.ReplaceOneAsync(x => x.Email == updatedCustomer.Email, updatedCustomer);
+
         public async Task RemoveAsync(string id) =>
             await _customersCollection.DeleteOneAsync(x => x.Id == id);
+
+        public async Task UpdateVMAsync(Customer updatedCustomer)
+        {
+            var filter = Builders<Customer>.Filter.Eq(x => x.Email, updatedCustomer.Email);
+            await _customersCollection.ReplaceOneAsync(filter, updatedCustomer);
+        }
     }
 }
