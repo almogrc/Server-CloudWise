@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Server_cloudata.DTO;
 using Server_cloudata.Models;
 using Server_cloudata.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static Server_cloudata.DTO.ThresholdDTO;
 
 namespace Server_cloudata.Controllers
@@ -94,40 +97,6 @@ namespace Server_cloudata.Controllers
             }
 
             return Ok(customer.VMs);
-        }
-
-        [HttpPost("AddThreshold")]
-        public async Task<IActionResult> AddThresholdToVM([FromBody] ThresholdRequest request)
-        {
-            var customer = await _customersService.GetAsyncByEmail(_contextAccessor.HttpContext.Session.GetString(_contextAccessor.HttpContext.Session.Id));
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            var virtualMachine = customer.VMs.FirstOrDefault(vm => vm.Name == request.MachineName);
-            if (virtualMachine == null)
-            {
-                return NotFound("Machine with the given name not found.");
-            }
-
-            if (virtualMachine.Thresholds == null)
-            {
-                virtualMachine.Thresholds = new Dictionary<eNodeExporterData, double>();
-            }
-
-            if (virtualMachine.Thresholds.ContainsKey(request.Key))
-            {
-                virtualMachine.Thresholds[request.Key] = request.Value;
-            }
-            else
-            {
-                virtualMachine.Thresholds.Add(request.Key, request.Value);
-            }
-
-            await _customersService.UpdateVMAsync(customer);
-
-            return Ok();
         }
     }
 }

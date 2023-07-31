@@ -25,9 +25,6 @@ namespace Server_cloudata.Models
 
         [BsonElement("virtualMachines")]
         public List<VirtualMachine> VMs { get; set; } = null!;
-
-        [BsonElement("alert")]
-        public List<Alert> Alerts { get; set; }
     }
 }
 
