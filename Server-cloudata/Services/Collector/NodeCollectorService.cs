@@ -11,7 +11,7 @@ using BuisnessLogic.Extentions;
 
 namespace Server_cloudata.Services.Collector
 {
-    public class NodeCollectorService : ICollectorService<Metric>
+    public class NodeCollectorService : INodeCollectorService<Metric>
     {
         public NodeCollectorService(ICollector<eNodeExporterData> collector, IBuilder<List<DataPoint>> builder) 
         {

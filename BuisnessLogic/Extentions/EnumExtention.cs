@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -26,6 +27,11 @@
                 .SingleOrDefault() as TypeValueAttribute;
 
             return attribute?.Value ?? string.Empty;
+        }
+        public static bool HasAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
+        {
+            FieldInfo fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
+            return fieldInfo.GetCustomAttribute<TAttribute>() != null;
         }
     }
 }

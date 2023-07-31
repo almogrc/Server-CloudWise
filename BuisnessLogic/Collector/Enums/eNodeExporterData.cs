@@ -22,15 +22,19 @@ namespace BuisnessLogic.Collector.Enums
         [QueryValue("node_memory_SReclaimable_bytes")]
         MemSRecliamableBytes,
         [TypeValue("GB")]
+        [Alert]
         RamUsage,
         [TypeValue("Byte")]
         [QueryValue("node_network_receive_bytes_total")]
+        [Alert]
         NetworkRecBytes,
         [TypeValue("Byte")]
         [QueryValue("node_network_transmit_bytes_total")]
+        [Alert]
         NetworkTransmitBytes,
         [QueryValue("node_cpu_seconds_total")]
         [TypeValue("%")]
+        [Alert]
         CPUUsage,
         [QueryValue("node_memory_MemTotal_bytes")]
         [TypeValue("GB")]

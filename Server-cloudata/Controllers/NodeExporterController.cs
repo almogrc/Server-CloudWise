@@ -15,14 +15,14 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class NodeExporterController : Controller
     {
-        public NodeExporterController(ICollectorService<Metric> collector, ICollector<eNodeExporterData> collectorNodeExporter, IHttpContextAccessor httpContextAccessor) 
+        public NodeExporterController(NodeCollectorService collector, ICollector<eNodeExporterData> collectorNodeExporter, IHttpContextAccessor httpContextAccessor) 
         {
             _collector = collector;
             _httpContextAccessor = httpContextAccessor;
             _collectorNodeExporter = collectorNodeExporter;
         }
 
-        private ICollectorService<Metric> _collector;
+        private INodeCollectorService<Metric> _collector;
         ICollector<eNodeExporterData> _collectorNodeExporter;
         private const string ramUsage = "RamUsage";
         private const string networkRecBytes = "NetworkRecBytes";

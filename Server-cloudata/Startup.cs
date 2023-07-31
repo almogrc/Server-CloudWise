@@ -40,7 +40,8 @@ namespace Server_cloudata
             //~~~
             services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
             services.AddSingleton<CustomersService>();
-            services.AddTransient<ICollectorService<Metric>, NodeCollectorService>();
+            services.AddSingleton<AlertsService>();
+            services.AddTransient<INodeCollectorService<Metric>, NodeCollectorService>();
             services.AddTransient<ICollector<eNodeExporterData>, NodeExporterCollector>();
             services.AddTransient<IBuilder<List<DataPoint>>, DataPointsBuilder>();
             services.AddLogging();
