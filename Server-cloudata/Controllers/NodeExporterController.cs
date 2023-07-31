@@ -15,7 +15,7 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class NodeExporterController : Controller
     {
-        public NodeExporterController(NodeCollectorService collector, ICollector<eNodeExporterData> collectorNodeExporter, IHttpContextAccessor httpContextAccessor) 
+        public NodeExporterController(INodeCollectorService<Metric> collector, ICollector<eNodeExporterData> collectorNodeExporter, IHttpContextAccessor httpContextAccessor) 
         {
             _collector = collector;
             _httpContextAccessor = httpContextAccessor;
