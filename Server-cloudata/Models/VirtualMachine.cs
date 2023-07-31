@@ -13,6 +13,6 @@ namespace Server_cloudata.Models
         public string Name { get; set; }
         public string Supplier { get; set; }
         public string Address { get; set; }
-        //public Dictionary<eNodeExporterData, double> 
+        public Dictionary<eNodeExporterData,double> Thresholds { get; set; }
     }
 }
