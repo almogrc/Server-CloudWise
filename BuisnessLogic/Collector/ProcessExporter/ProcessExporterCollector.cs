@@ -27,7 +27,7 @@ namespace BuisnessLogic.Collector.ProcessExporter
         //    return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
         //}
 
-        public string AddInstanceToUrl(eProcessExporterData processExporeterDataType, string parms="")
+        public string AddInstanceAnParamsToUrl(eProcessExporterData processExporeterDataType, string parms="")
         {
             return $"{processExporeterDataType.GetTypeValue()}{{instance=\"{Instance}\"{parms}}}";
         }
@@ -35,40 +35,30 @@ namespace BuisnessLogic.Collector.ProcessExporter
         {
             Uri url;
             IP = address;
+            string nameGroupParam = values.Length > 0 ? $",groupname=\"{values[0]}\"" : "";
             eProcessExporterData ProcessExporterData;
             if (!Enum.TryParse(query, out ProcessExporterData))
             {
                 throw new Exception("can't parse");
             }
+            
             switch (ProcessExporterData)
             {
                 case eProcessExporterData.cpu:
                     //to delete
-                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceToUrl(ProcessExporterData, $",groupname=\"{values[0]}\",memtype=\"{eMemoryType.proportionalResident}\""), from, to);
+                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam}\",memtype=\"{eMemoryType.proportionalResident}\""), from, to);
                     break;
                 case eProcessExporterData.proportionalMemoryResident:
-                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceToUrl(ProcessExporterData, $",groupname=\"{values[0]}\",memtype=\"{eMemoryType.proportionalResident}\""), from, to);
+                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},memtype=\"{eMemoryType.proportionalResident}\""), from, to);
                     break;
                 case eProcessExporterData.readBytes:
-                    url = _prometheusAPI.BuildUrlQueryRangeWithRate(AddInstanceToUrl(ProcessExporterData, $",groupname=\"{values[0]}\""), from, to);
+                    url = _prometheusAPI.BuildUrlQueryRangeWithRate(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam}"), from, to);
                     break;
                 default:
                     throw new Exception("unknow type");
             }
             return url.AbsoluteUri;
         }
-        //public async Task Collect()
-        //{
-        //    foreach (eProcessExporterData processExporeterData in Enum.GetValues(typeof(eProcessExporterData)))
-        //    {
-        //        Uri url = _prometheusAPI.BuildUrlQueryRangeWithRate(BuildQuery(processExporeterData),
-        //            DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow);
-        //
-        //        sendRequestAndUpdateData(url.AbsoluteUri, processExporeterData);
-        //    }
-        //    _groupBuilder.DataToConvert = _data;
-        //    _groupBuilder.Build("");
-        //}
         public async Task<string> Collect(string query, DateTime from, DateTime to, string address, params string[] values)
         {
             string url = await BuildQuery(query, from, to, address, values);;

@@ -3,17 +3,33 @@ using Microsoft.AspNetCore.Mvc;
 using Server_cloudata.Controllers.Queries;
 using System.Collections.Generic;
 using System;
+using BuisnessLogic.Collector.Enums;
+using BuisnessLogic.Collector;
+using Microsoft.AspNetCore.Http;
+using Server_cloudata.Services.Collector;
+using Server_cloudata.DTO;
+using Server_cloudata.ServerDataManager;
 
 namespace Server_cloudata.Controllers
 {
     [Route("api/machine/[controller]")]
     [ApiController]
-    public class ProcessRealDataController : Controller
+    public class ProcessExporterController : ControllerBase
     {
-        [HttpGet("ProportionalResidentMemory")]
-        public IActionResult NetworkTransmitBytes([FromQuery] QueriesParam queries, [FromQuery] DateTime Start, [FromQuery] string GroupName)    //query="ramusage" start end                  todo to handle clients
+        public ProcessExporterController(IProcessExporterService<List<Metric>> collectorService, IHttpContextAccessor httpContextAccessor)
         {
-            return CommonRequest(queries, Start, GroupName);
+            _collectorService = collectorService;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        IProcessExporterService<List<Metric>> _collectorService;
+        private IHttpContextAccessor _httpContextAccessor;
+        private const string proportionalResidentMemory = "ProportionalResidentMemory";
+       
+        [HttpPost(proportionalResidentMemory)]
+        public IActionResult NetworkTransmitBytes([FromBody] QueriesInfo queriesInfo)
+        {
+            return Ok(_collectorService.GetData(proportionalResidentMemory, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
         }
         [HttpGet("readBytes")]
         public IActionResult ReadBytes([FromQuery] QueriesParam queries, [FromQuery] DateTime Start, [FromQuery] string GroupName)    //query="ramusage" start end                  todo to handle clients

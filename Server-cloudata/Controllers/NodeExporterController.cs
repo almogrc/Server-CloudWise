@@ -13,7 +13,7 @@ namespace Server_cloudata.Controllers
 {
     [Route("api/machine/[controller]")]
     [ApiController]
-    public class NodeExporterController : Controller
+    public class NodeExporterController : ControllerBase
     {
         public NodeExporterController(INodeCollectorService<Metric> collector, ICollector<eNodeExporterData> collectorNodeExporter, IHttpContextAccessor httpContextAccessor) 
         {
@@ -24,11 +24,12 @@ namespace Server_cloudata.Controllers
 
         private INodeCollectorService<Metric> _collector;
         ICollector<eNodeExporterData> _collectorNodeExporter;
+        private const string network = "Network";
         private const string ramUsage = "RamUsage";
         private const string networkRecBytes = "NetworkRecBytes";
         private const string networkTransmitBytes = "NetworkTransmitBytes";
         private const string cpuUsage = "CPUUsage";
-        private const string ram = "Ram";
+        private const string ram = "Ram"; // value
 
         private IHttpContextAccessor _httpContextAccessor;
 
@@ -39,14 +40,21 @@ namespace Server_cloudata.Controllers
             return Ok(await _collector.GetData(ramUsage, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
         }
         [HttpPost(networkRecBytes)]
-        public async Task<IActionResult> NetworkReciveBytes([FromBody] QueriesInfo queriesInfo)   
+        public async Task<IActionResult> NetworkRecive([FromBody] QueriesInfo queriesInfo)   
         {
             return Ok(await _collector.GetData(networkRecBytes, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
         }
         [HttpPost(networkTransmitBytes)]
-        public async Task<IActionResult> NetworkTransmitBytes([FromBody] QueriesInfo queriesInfo)    
+        public async Task<IActionResult> NetworkTransmit([FromBody] QueriesInfo queriesInfo)    
         {
             return Ok(await _collector.GetData(networkTransmitBytes, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
+        }
+        [HttpPost(network)]
+        public async Task<IActionResult> NetworkBytes([FromBody] QueriesInfo queriesInfo)
+        {
+            Metric metricNetworkTransmit = await _collector.GetData(networkTransmitBytes, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]);
+            Metric metricNetworkRecive = await _collector.GetData(networkRecBytes, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]);
+            return Ok(new Metric[] { metricNetworkTransmit, metricNetworkRecive });
         }
         [HttpPost(cpuUsage)]
         public async Task<IActionResult> CpuUsage([FromBody] QueriesInfo queriesInfo)

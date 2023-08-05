@@ -24,11 +24,11 @@ namespace BuisnessLogic.Collector.Enums
         [TypeValue("GB")]
         [Alert]
         RamUsage,
-        [TypeValue("Byte")]
+        [TypeValue("kb/s")]
         [QueryValue("node_network_receive_bytes_total")]
         [Alert]
         NetworkRecBytes,
-        [TypeValue("Byte")]
+        [TypeValue("kb/s")]
         [QueryValue("node_network_transmit_bytes_total")]
         [Alert]
         NetworkTransmitBytes,

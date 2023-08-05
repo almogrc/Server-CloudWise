@@ -20,6 +20,7 @@ using BuisnessLogic.Collector;
 using Server_cloudata.Services.Collector;
 using Server_cloudata.Middleware;
 using BuisnessLogic.Collector.Builder;
+using BuisnessLogic.Collector.ProcessExporter;
 
 namespace Server_cloudata
 {
@@ -44,12 +45,15 @@ namespace Server_cloudata
             services.AddTransient<INodeCollectorService<Metric>, NodeCollectorService>();
             services.AddTransient<ICollector<eNodeExporterData>, NodeExporterCollector>();
             services.AddTransient<IBuilder<List<DataPoint>>, DataPointsBuilder>();
+            services.AddTransient<IProcessExporterService<List<Metric>>, ProcessCollectorService>();
+            services.AddTransient<ICollector<eProcessExporterData>, ProcessExporterCollector>();
+            services.AddTransient<IBuilder<Groups>, GroupsBuilder>();
             services.AddLogging();
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000") // Replace with your React app's origin
+                    builder.WithOrigins("http://localhost:3456") // Replace with your React app's origin
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials(); // Allow credentials (cookies)

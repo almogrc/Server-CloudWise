@@ -20,6 +20,7 @@ namespace BuisnessLogic.Collector.NodeExporter
         {
         }
         private readonly long GBInBytes = 1073741824;
+        private readonly string KbPerSecond = "8/60";
         private string AddInstanceToUrl(eNodeExporterData nodeExporeterData, string param="")
         { 
             return $"{nodeExporeterData.GetQueryValue()}{{instance=\"{Instance}\"{param}}}";
@@ -49,7 +50,7 @@ namespace BuisnessLogic.Collector.NodeExporter
                     break;
                 case eNodeExporterData.NetworkRecBytes:
                 case eNodeExporterData.NetworkTransmitBytes:
-                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceToUrl(eNodeExporter, ",device=\"eth0\""), from, to);
+                    url = _prometheusAPI.BuildUrlQueryRangeWithIRate(AddInstanceToUrl(eNodeExporter, ",device=\"eth0\""), from, to, unit: KbPerSecond);
                     break;
                 case eNodeExporterData.CPUUsage:
                     url = _prometheusAPI.BuildUrlQueryRange($"sum by(instance) ({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporter,", mode !=\"idle\""))}) / on(instance) group_left sum by (instance)({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporter))})*100", from, to);

@@ -30,9 +30,9 @@ namespace BuisnessLogic.Collector.Prometheus
         {
             return new Uri($@"{URLBase}{QueryRange}?{QueryKey}=rate({query}[{rate}])&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
         }
-        public Uri BuildUrlQueryRangeWithIRate(string query, DateTime start, DateTime end, string step = "1m", string rate = "1m")
+        public Uri BuildUrlQueryRangeWithIRate(string query, DateTime start, DateTime end, string unit = "1" ,string step = "1m", string rate = "1m")
         {
-            return new Uri($@"{URLBase}{QueryRange}?{QueryKey}=irate({query}[{rate}])&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
+            return new Uri($@"{URLBase}{QueryRange}?{QueryKey}=irate({query}[{rate}])*{unit}&{StartKey}={start.ToRfc3339String()}&{EndKey}={end.ToRfc3339String()}&{stepKey}={step}");
         }
         public Uri BuildUrlQueryRangeWithIRatePercentage(string query, DateTime start, DateTime end, string step = "1", string rate = "1m")
         {
