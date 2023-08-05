@@ -27,7 +27,7 @@ namespace Server_cloudata.Services.Collector
             string jsonToConvert = await _collector.Collect(dataType, from, to, address, values);// instance(dns), what to collect, from and to 
             Groups Groups = await _builder.Build(jsonToConvert);
             List<Metric> Metrics = new List<Metric>();
-            Groups.GroupNameToGroupData.Keys.ToList().ForEach(groupName => 
+            Groups.GroupNameToGroupData.Keys.ToList().Where(groupName => !groupName.Contains("Relay")).ToList().ForEach(groupName => 
             Metrics.Add(new Metric(Groups.GroupNameToGroupData[groupName], from, to, dataType, ((eNodeExporterData)Enum.Parse(typeof(eProcessExporterData), dataType)).GetTypeValue(), groupName)));
             return Metrics;
            // return new Metric(dataPoints, from, to, dataType, ((eNodeExporterData)Enum.Parse(typeof(eNodeExporterData), dataType)).GetTypeValue(), "Node exporter");

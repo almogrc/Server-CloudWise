@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Server_cloudata.Services.Collector;
 using Server_cloudata.DTO;
 using Server_cloudata.ServerDataManager;
+using System.Threading.Tasks;
 
 namespace Server_cloudata.Controllers
 {
@@ -24,31 +25,32 @@ namespace Server_cloudata.Controllers
 
         IProcessExporterService<List<Metric>> _collectorService;
         private IHttpContextAccessor _httpContextAccessor;
-        private const string proportionalResidentMemory = "ProportionalResidentMemory";
-       
-        [HttpPost(proportionalResidentMemory)]
-        public IActionResult NetworkTransmitBytes([FromBody] QueriesInfo queriesInfo)
+        private const string residentMemory = "ResidentMemory";
+        private const string cpuUser = "CpuUser";
+        private const string cpuSystem = "CpuSystem";
+        private const string readBytes = "ReadBytes";
+
+        [HttpPost(residentMemory)]
+        public async Task<IActionResult> ResidentMemory([FromBody] QueriesInfo queriesInfo)
         {
-            return Ok(_collectorService.GetData(proportionalResidentMemory, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
+            return Ok(await _collectorService.GetData(residentMemory, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
         }
-        [HttpGet("readBytes")]
-        public IActionResult ReadBytes([FromQuery] QueriesParam queries, [FromQuery] DateTime Start, [FromQuery] string GroupName)    //query="ramusage" start end                  todo to handle clients
+
+        [HttpPost(cpuUser)]
+        public async Task<IActionResult> CPUUser([FromBody] QueriesInfo queriesInfo)
         {
-            return CommonRequest(queries, Start, GroupName);
+            return Ok(await _collectorService.GetData(cpuUser, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
         }
-        public IActionResult CommonRequest(QueriesParam queries, DateTime Start,string GroupName)
+        [HttpPost(cpuSystem)]
+        public async Task<IActionResult> CPUSystem([FromBody] QueriesInfo queriesInfo)
         {
-            try
-            {
-               // queries.CheckValidation();
-               // Machine machine = Machine.MachineInstance;
-               // LinkedList<DataPoint> data = machine.GetData(queries.Exporter, queries.Query, Start, GroupName);
-               return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(""));
-            }
-            catch (Exception ex) // server's execptions and Buissnes logic
-            {
-                return Conflict(ex); // todo
-            }
+            return Ok(await _collectorService.GetData(cpuSystem, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
+        }
+
+        [HttpPost(readBytes)]
+        public async Task<IActionResult> ReadBytes([FromBody] QueriesInfo queriesInfo)
+        {
+            return Ok(await _collectorService.GetData(readBytes, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
         }
     }
 }

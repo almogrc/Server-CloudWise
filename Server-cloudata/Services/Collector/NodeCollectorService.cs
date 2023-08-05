@@ -26,7 +26,7 @@ namespace Server_cloudata.Services.Collector
         {
             string jsonToConvert = await _collector.Collect(dataType, from, to, address, values);// instance(dns), what to collect, from and to 
             List<DataPoint> dataPoints = await _builder.Build(jsonToConvert);
-            return new Metric(dataPoints, from, to, dataType, ((eNodeExporterData)Enum.Parse(typeof(eNodeExporterData), dataType)).GetTypeValue(), "Node exporter");
+            return new Metric(dataPoints, from, to, dataType, ((eNodeExporterData)Enum.Parse(typeof(eNodeExporterData), dataType)).GetTypeValue(), dataType);
         }
     }
 }

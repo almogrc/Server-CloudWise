@@ -63,6 +63,7 @@ namespace BuisnessLogic.Collector.NodeExporter
             }
             return url.AbsoluteUri;
         }
+
         public async Task<string> Collect(string query, DateTime from, DateTime to, string address, params string[] values)
         {
             string url = await BuildQuery(query, from, to, address, values);

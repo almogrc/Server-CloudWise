@@ -18,18 +18,13 @@ namespace BuisnessLogic.Collector.ProcessExporter
         {
         }
 
-        //public string CPUQuery(string groupName, eCPUMode cpuMode = eCPUMode.user)
-        //{
-        //    return $"namedprocess_namegroup_cpu_seconds_total{{groupname=\"{groupName}\",mode=\"{cpuMode}\",instance=\"{Instance}\"}}";
-        //}
-        //public string MemoryQuery(string groupName, eMemoryType memoryType = eMemoryType.Resident)
-        //{
-        //    return $"namedprocess_namegroup_memory_bytes{{groupname=\"{groupName}\",memtype=\"{memoryType.ToString().ToLower()}\",instance=\"{Instance}\"}}";
-        //}
-
+        private readonly long MBInBytes = 1048576;
+        private readonly string MsInSecond = "1000";
+        private readonly string KbPerSecond = "8/60";
+        private readonly string IgnoreUnrelevantProcess = "";//"/ignoring(mode) namedprocess_namegroup_num_procs > 0";
         public string AddInstanceAnParamsToUrl(eProcessExporterData processExporeterDataType, string parms="")
         {
-            return $"{processExporeterDataType.GetTypeValue()}{{instance=\"{Instance}\"{parms}}}";
+            return $"{processExporeterDataType.GetQueryValue()}{{instance=\"{Instance}\"{parms}}}";
         }
         private async Task<string> BuildQuery(string query, DateTime from, DateTime to, string address, params string[] values)
         {
@@ -44,24 +39,29 @@ namespace BuisnessLogic.Collector.ProcessExporter
             
             switch (ProcessExporterData)
             {
-                case eProcessExporterData.cpu:
+                case eProcessExporterData.CpuUser:
                     //to delete
-                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam}\",memtype=\"{eMemoryType.proportionalResident}\""), from, to);
+                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData,$"{nameGroupParam},mode=\"{eCPUMode.user}\""),"30s")}{"/"}{MsInSecond}){IgnoreUnrelevantProcess}", from, to);
                     break;
-                case eProcessExporterData.proportionalMemoryResident:
-                    url = _prometheusAPI.BuildUrlQueryRange(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},memtype=\"{eMemoryType.proportionalResident}\""), from, to);
+                case eProcessExporterData.CpuSystem:
+                    //to delete
+                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},mode=\"{eCPUMode.system}\""),"30s")}{"/"}{MsInSecond}){IgnoreUnrelevantProcess}", from, to);
                     break;
-                case eProcessExporterData.readBytes:
-                    url = _prometheusAPI.BuildUrlQueryRangeWithRate(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam}"), from, to);
+                case eProcessExporterData.ResidentMemory:
+                    url = _prometheusAPI.BuildUrlQueryRange($"({AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},memtype=\"{eMemoryType.Resident.ToString().ToLower()}\"")}/{MBInBytes}){IgnoreUnrelevantProcess}", from, to);
+                    break;
+                case eProcessExporterData.ReadBytes:
+                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam}"))}){IgnoreUnrelevantProcess}", from, to);
                     break;
                 default:
                     throw new Exception("unknow type");
             }
             return url.AbsoluteUri;
         }
+
         public async Task<string> Collect(string query, DateTime from, DateTime to, string address, params string[] values)
         {
-            string url = await BuildQuery(query, from, to, address, values);;
+            string url = await BuildQuery(query, from, to, address, values);
             return await _client.GetAsync(url);
         }
 
