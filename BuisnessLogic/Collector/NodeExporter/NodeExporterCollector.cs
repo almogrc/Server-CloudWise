@@ -25,6 +25,7 @@ namespace BuisnessLogic.Collector.NodeExporter
         { 
             return $"{nodeExporeterData.GetQueryValue()}{{instance=\"{Instance}\"{param}}}";
         }
+        private string CpuUsed => $"sum by(instance) ({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporterData.CPUUsage, ", mode !=\"idle\""))}) / on(instance) group_left sum by (instance)({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporterData.CPUUsage))})*100";
         private async Task<string> BuildQuery(string query,DateTime from, DateTime to, string address, params string[] values)
         {
             Uri url;
@@ -53,10 +54,13 @@ namespace BuisnessLogic.Collector.NodeExporter
                     url = _prometheusAPI.BuildUrlQueryRangeWithIRate(AddInstanceToUrl(eNodeExporter, ",device=\"eth0\""), from, to, unit: KbPerSecond);
                     break;
                 case eNodeExporterData.CPUUsage:
-                    url = _prometheusAPI.BuildUrlQueryRange($"sum by(instance) ({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporter,", mode !=\"idle\""))}) / on(instance) group_left sum by (instance)({_prometheusAPI.Irate(AddInstanceToUrl(eNodeExporter))})*100", from, to);
+                    url = _prometheusAPI.BuildUrlQueryRange(CpuUsed, from, to);
                     break;
                 case eNodeExporterData.Ram:
-                    url = _prometheusAPI.BuildUrlQuery($"{AddInstanceToUrl(eNodeExporter)}/{GBInBytes}");
+                    url = _prometheusAPI.BuildUrlQueryRange($"{AddInstanceToUrl(eNodeExporter)}/{GBInBytes}", DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
+                    break;
+                case eNodeExporterData.CPUBusy:
+                    url = _prometheusAPI.BuildUrlQuery(CpuUsed);
                     break;
                 default:
                     throw new Exception("not valid type");

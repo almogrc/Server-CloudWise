@@ -38,6 +38,8 @@ namespace BuisnessLogic.Collector.Enums
         CPUUsage,
         [QueryValue("node_memory_MemTotal_bytes")]
         [TypeValue("GB")]
-        Ram
+        Ram,
+        [TypeValue("%")]
+        CPUBusy,
     }
 }
