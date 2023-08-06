@@ -11,13 +11,13 @@ using BuisnessLogic.Algorithms.DTOPrediction;
 
 namespace BuisnessLogic.Algorithms
 {
-    internal class TimeSeriesForecating : IPredictiveAlgorithm
+    internal class SSATimeSeriesForecating : IPredictiveAlgorithm
     {
         
         private MLContext _context;
         private LinkedList<DataPoint> _data;
         public float[] Result { get; private set; }
-        public TimeSeriesForecating(LinkedList<DataPoint> data)
+        public SSATimeSeriesForecating(LinkedList<DataPoint> data)
         {
             _context = new MLContext();
             _data = data;
@@ -65,7 +65,6 @@ namespace BuisnessLogic.Algorithms
              //   }
 
             }
-
         }
     }
 }

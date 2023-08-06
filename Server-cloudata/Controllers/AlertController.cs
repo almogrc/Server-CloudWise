@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
+using System.Linq;
 
 namespace Server_cloudata.Controllers
 {
@@ -17,11 +18,13 @@ namespace Server_cloudata.Controllers
     {
         private CustomersService _customersService;
         private IHttpContextAccessor _contextAccessor;
+        private AlertsService _alertsService;
 
-        public AlertController(IHttpContextAccessor httpContextAccessor, CustomersService customersService)
+        public AlertController(IHttpContextAccessor httpContextAccessor, CustomersService customersService, AlertsService alertsService)
         {
             _contextAccessor = httpContextAccessor;
             _customersService = customersService;
+            _alertsService = alertsService;
         }
 
         public IActionResult Index()
@@ -29,7 +32,7 @@ namespace Server_cloudata.Controllers
             return View();
         }
 
-        /*
+        
         [HttpPost("AddThreshold")]
         public async Task<IActionResult> AddThresholdToVM([FromBody] ThresholdRequest request)
         {
@@ -61,50 +64,9 @@ namespace Server_cloudata.Controllers
 
             await _customersService.UpdateVMAsync(customer);
 
-            var timer = new Timer(async _ =>
-            {
-                await CheckThresholdsAndSendAlerts(customer, virtualMachine);
-            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(2));
+            await _alertsService.UpdateOrCreateAlertManager(customer.Email, request.MachineName);
 
             return Ok();
         }
-
-        private async Task CheckThresholdsAndSendAlerts(Customer customer, VirtualMachine virtualMachine)
-        {
-            int vmData;
-
-            if (vmData == null)
-            {
-
-                //Option: maybe log the error or handle it in other way
-                return;
-            }
-
-            foreach (var key in virtualMachine.Thresholds.Keys)
-            {
-                if (vmData.Value > virtualMachine.Thresholds[key])
-                {
-                    var alert = new Alert
-                    {
-                    };
-
-                    if (customer.Alerts == null)
-                    {
-                        customer.Alerts = new List<Alert>();
-                    }
-                    customer.Alerts.Add(alert);
-
-                    await _customersService.UpdateVMAsync(customer);
-
-                    await SendAlertEmail(alert);
-                }
-            }
-        }
-
-        private async Task SendAlertEmail(Alert alert)
-        {
-
-        }
-        */
     }
 }

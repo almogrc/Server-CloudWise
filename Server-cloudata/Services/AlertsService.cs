@@ -10,26 +10,25 @@ namespace Server_cloudata.Services
 {
     public class AlertsService // singleton
     {
+        private CustomersService _customersService;
+        private Dictionary<string, AlertManager> _userIdToAlertManager;
+
         public AlertsService(CustomersService customersService) 
         {
             _userIdToAlertManager = new Dictionary<string, AlertManager>();
             _customersService = customersService;
         }
-        private CustomersService _customersService;
-        private Dictionary<string, AlertManager> _userIdToAlertManager;
 
         public async Task UpdateOrCreateAlertManager(string customerEmail, string machineId)
         {
-            //string customerId = _httpContextAccessor.HttpContext.Session.GetString(_httpContextAccessor.HttpContext.Session.Id);
-
             if (_userIdToAlertManager.ContainsKey(customerEmail))
             {
-                _customersService.GetAsyncByEmail(customerEmail);    
+                await _customersService.GetAsyncByEmail(customerEmail);    
             }
             else
             {
                 AlertManager alertManager = new AlertManager(_customersService, customerEmail);
-                alertManager.UpdateOrCreateThresholdRefresher(machineId);
+                await alertManager.UpdateOrCreateThresholdRefresher(machineId);
                 _userIdToAlertManager.Add(customerEmail, alertManager);
             }
         }
