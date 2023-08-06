@@ -12,5 +12,7 @@ namespace Server_cloudata.Models
         public double CurrentValue { get; set; }
         public DateTime Timestamp { get; set; }
         public string EmailRecipient { get; set; }
+
+        //public string Description { get; set; }
     }
 }

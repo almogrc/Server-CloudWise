@@ -9,7 +9,7 @@ namespace Server_cloudata.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string Id { get; set; }
 
         [BsonElement("id")]
         public string CustomerId { get; set; }

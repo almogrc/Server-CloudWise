@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BuisnessLogic.Collector.Enums.Atributes;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BuisnessLogic.Collector.Enums
 {
@@ -21,6 +23,7 @@ namespace BuisnessLogic.Collector.Enums
         MemBuffersBytes,
         [QueryValue("node_memory_SReclaimable_bytes")]
         MemSRecliamableBytes,
+        [BsonRepresentation(BsonType.String)]
         [TypeValue("GB")]
         [Alert]
         RamUsage,

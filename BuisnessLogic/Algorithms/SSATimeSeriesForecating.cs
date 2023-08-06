@@ -11,13 +11,13 @@ using BuisnessLogic.Algorithms.DTOPrediction;
 
 namespace BuisnessLogic.Algorithms
 {
-    internal class TimeSeriesForecating : IPredictiveAlgorithm
+    internal class SSATimeSeriesForecating : IPredictiveAlgorithm
     {
         
         private MLContext _context;
         private List<DataPoint> _data;
         public float[] Result { get; private set; }
-        public TimeSeriesForecating(List<DataPoint> data)
+        public SSATimeSeriesForecating(LinkedList<DataPoint> data)
         {
             _context = new MLContext();
             _data = data;
@@ -33,7 +33,26 @@ namespace BuisnessLogic.Algorithms
                 seriesLength: (int)(_data.Count * 0.8), 
                 trainSize: (int)(_data.Count * 0.6), 
                 horizon: (int)(_data.Count * 0.2));
-          
+            //var pipline = _context.Forecasting.ForecastBySamira(
+            //     "Forecast",
+            //     "Value",
+            //     windowSize: (int)(_data.Count * 0.07),
+            //     seriesLength: (int)(_data.Count * 0.8),
+            //     trainSize: (int)(_data.Count * 0.6),
+            //     horizon: (int)(_data.Count * 0.2));
+
+           // var arimaPipeline = pipline.ReplaceEstimator("Forecast", _context.Transforms.Forecasting.ForecastBySarima
+           //     ("Value", windowSize: 5, seriesLength: (int)(_data.Count * 0.7),
+           //     trainSize: (int)(_data.Count * 0.3), 
+           //     horizon: (int)(_data.Count * 0.2)));
+            //var pipline = _context.Forecasting.ForecastBySsa(
+            //    "Forecast",
+            //    "Value",
+            //    windowSize: 100,
+            //    seriesLength: _data.Count,
+            //    trainSize: _data.Count,
+            //    horizon: (int)(_data.Count*0.2)
+            //   );
             var model = pipline.Fit(dataView);
             using (var forcastingEngine = model.CreateTimeSeriesEngine<DataPoint, DataPointForcast>(_context))
             {
@@ -46,7 +65,6 @@ namespace BuisnessLogic.Algorithms
              //   }
 
             }
-
         }
     }
 }

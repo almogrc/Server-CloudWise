@@ -12,7 +12,6 @@ namespace Server_cloudata.Services
     {
         public IMongoCollection<Customer> _customersCollection { private set; get; }
 
-
         public CustomersService(IOptions<CustomerDatabaseSettings> customerDatabaseSettings)
         {
             var mongoClient = new MongoClient(
@@ -28,10 +27,10 @@ namespace Server_cloudata.Services
         public async Task<List<Customer>> GetAsync() =>
             await _customersCollection.Find(_ => true).ToListAsync();
 
-        public async Task<Customer?> GetAsync(string id) =>
+        public async Task<Customer> GetAsync(string id) =>
             await _customersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-        public async Task<Customer?> GetAsyncByEmail(string email) =>
+        public async Task<Customer> GetAsyncByEmail(string email) =>
             await _customersCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
 
         public async Task CreateAsync(Customer newCustomer) =>
