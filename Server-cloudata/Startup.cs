@@ -21,6 +21,8 @@ using Server_cloudata.Services.Collector;
 using Server_cloudata.Middleware;
 using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.ProcessExporter;
+using Server_cloudata.Services.Predict;
+using BuisnessLogic.Algorithms;
 
 namespace Server_cloudata
 {
@@ -42,12 +44,15 @@ namespace Server_cloudata
             services.Configure<CustomerDatabaseSettings>(Configuration.GetSection("CustomerDatabase"));
             services.AddSingleton<CustomersService>();
             services.AddSingleton<AlertsService>();
-            services.AddTransient<INodeCollectorService<Metric>, NodeCollectorService>();
             services.AddTransient<ICollector<eNodeExporterData>, NodeExporterCollector>();
             services.AddTransient<IBuilder<List<DataPoint>>, DataPointsBuilder>();
             services.AddTransient<IProcessExporterService<List<Metric>>, ProcessCollectorService>();
             services.AddTransient<ICollector<eProcessExporterData>, ProcessExporterCollector>();
             services.AddTransient<IBuilder<Groups>, GroupsBuilder>();
+            services.AddTransient<INodeCollectorService<Metric>, NodeCollectorService>();
+            services.AddTransient<IPredicteService, PredictService>();
+            services.AddTransient<SSATimeSeriesForecating>();
+            services.AddTransient<ArimaTimeSeriesForecasting>();
             services.AddLogging();
             services.AddCors(options =>
             {

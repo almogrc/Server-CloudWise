@@ -8,31 +8,26 @@ using Microsoft.ML.Data;
 using Microsoft.ML.Transforms.TimeSeries;
 using BuisnessLogic.Model;
 using BuisnessLogic.Algorithms.DTOPrediction;
+using Newtonsoft.Json.Linq;
 
 namespace BuisnessLogic.Algorithms
 {
-    internal class SSATimeSeriesForecating : IPredictiveAlgorithm
+    public class SSATimeSeriesForecating : IPredictiveAlgorithm
     {
-        
-        private MLContext _context;
-        private List<DataPoint> _data;
-        public float[] Result { get; private set; }
-        public SSATimeSeriesForecating(LinkedList<DataPoint> data)
+       
+        public async Task<List<float>> Predict(List<DataPoint> data)
         {
-            _context = new MLContext();
-            _data = data;
-        }
-        public void Predict()
-        { 
-            IDataView dataView = _context.Data.LoadFromEnumerable(_data);
+            float[] result;
+            MLContext context = new MLContext();
+            IDataView dataView = context.Data.LoadFromEnumerable(data);
             
-            var pipline = _context.Forecasting.ForecastBySsa(
+            var pipline = context.Forecasting.ForecastBySsa(
                 "Forecast",
                 "Value",
-                windowSize: (int)(_data.Count * 0.07),
-                seriesLength: (int)(_data.Count * 0.8), 
-                trainSize: (int)(_data.Count * 0.6), 
-                horizon: (int)(_data.Count * 0.2));
+                windowSize: (int)(data.Count * 0.07),
+                seriesLength: (int)(data.Count * 0.8), 
+                trainSize: (int)(data.Count * 0.6), 
+                horizon: (int)(data.Count * 0.2));
             //var pipline = _context.Forecasting.ForecastBySamira(
             //     "Forecast",
             //     "Value",
@@ -54,10 +49,11 @@ namespace BuisnessLogic.Algorithms
             //    horizon: (int)(_data.Count*0.2)
             //   );
             var model = pipline.Fit(dataView);
-            using (var forcastingEngine = model.CreateTimeSeriesEngine<DataPoint, DataPointForcast>(_context))
+            using (var forcastingEngine = model.CreateTimeSeriesEngine<DataPoint, DataPointForcast>(context))
             {
                 var forcasts = forcastingEngine.Predict();
-                Result = forcasts.Forecast;
+                result = forcasts.Forecast;
+                return result.ToList();
                 // foreach (var item in forcasts.Value){
 
                 //foreach(var item in forcasts.Forecast) 

@@ -38,7 +38,7 @@ namespace Server_cloudata.Controllers
         private const string cpuGauge = "CPUGauge";
         private const string ramGauge = "RamGauge";
         private const string ram = "Ram"; // value
-
+        private const string cores = "Cores"; // value
         private IHttpContextAccessor _httpContextAccessor;
 
 
@@ -93,6 +93,11 @@ namespace Server_cloudata.Controllers
         public async Task<IActionResult> Ram()
         {
             return Ok(new { result = (await _collector.GetData(ram, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow, Request.Headers[ServerUtils.MachineId])).DataPoints.First().Value, type = ((eNodeExporterData)Enum.Parse(typeof(eNodeExporterData), ram)).GetTypeValue() });
+        }
+        [HttpGet(cores)]
+        public async Task<IActionResult> Cores()
+        {
+            return Ok(new { result = (await _collector.GetData(cores, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow, Request.Headers[ServerUtils.MachineId])).DataPoints.First().Value, type=""});
         }
     }
 }

@@ -44,5 +44,7 @@ namespace BuisnessLogic.Collector.Enums
         Ram,
         [TypeValue("%")]
         CPUBusy,
+        [QueryValue("node_cpu_seconds_total")]
+        Cores
     }
 }

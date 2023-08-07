@@ -20,7 +20,7 @@ namespace BuisnessLogic.Model
         }
 
         public string Name { get; }
-        public List<DataPoint> DataPoints { get; }
+        public List<DataPoint> DataPoints { get; set; }
         public DateTime From { get; }
         public DateTime To { get; }
         public string DataType { get; }
