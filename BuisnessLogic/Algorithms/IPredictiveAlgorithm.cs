@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuisnessLogic.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BuisnessLogic.Algorithms
 {
-    interface IPredictiveAlgorithm
+    public interface IPredictiveAlgorithm
     {
-        void Predict();
-
+        Task<List<float>> Predict(List<DataPoint> data);
     }
 }

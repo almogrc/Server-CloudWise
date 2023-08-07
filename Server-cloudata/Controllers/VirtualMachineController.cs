@@ -16,7 +16,7 @@ namespace Server_cloudata.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VirtualMachineController : Controller
+    public class VirtualMachineController : ControllerBase
     {
         private CustomersService _customersService;
         private IHttpContextAccessor _contextAccessor;
@@ -25,11 +25,6 @@ namespace Server_cloudata.Controllers
         {
             _contextAccessor = httpContextAccessor;
             _customersService = customersService;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpPost("AddVM")]
@@ -95,7 +90,6 @@ namespace Server_cloudata.Controllers
             {
                 return NotFound();
             }
-
             return Ok(customer.VMs);
         }
     }

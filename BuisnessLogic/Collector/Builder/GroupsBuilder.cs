@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using BuisnessLogic.Exceptions;
 using System.Xml.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace BuisnessLogic.Collector.Builder
 {
@@ -30,7 +31,7 @@ namespace BuisnessLogic.Collector.Builder
             }
             return groups;
         }
-        LinkedList<DataPoint> convertUsage(dynamic values)
+        List<DataPoint> convertUsage(dynamic values)
         {
             //to check
             LinkedList<DataPoint> dateTimeToMemoryUsage = new LinkedList<DataPoint>();
@@ -48,11 +49,15 @@ namespace BuisnessLogic.Collector.Builder
                 dateTimeToMemoryUsage.AddLast(new DataPoint { Date = dateTime, Value = usageValue });
             }
 
-            return dateTimeToMemoryUsage;
+            return dateTimeToMemoryUsage.ToList();
         }
         private dynamic convertToJsonAndCheckValidation(string jsonString)
         {
-            var json = JsonConvert.DeserializeObject<dynamic>(jsonString);
+
+            using JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
+            // Access the dynamic properties using JsonElement.GetRawText()
+            dynamic json = JsonConvert.DeserializeObject<dynamic>(jsonDocument.RootElement.GetRawText());
+
             if (json["status"] != "success")
             {
                 throw new UnsuccessfulResponseException($"JSON status - {json["status"]}");

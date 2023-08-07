@@ -10,10 +10,15 @@ namespace BuisnessLogic.Collector.Enums
     public enum eProcessExporterData
     {
         [QueryValue("namedprocess_namegroup_cpu_seconds_total")]
-        cpu,
+        [TypeValue("ms")]
+        CpuSystem,
+        [QueryValue("namedprocess_namegroup_cpu_seconds_total")]
+        [TypeValue("ms")]
+        CpuUser,
         [QueryValue("namedprocess_namegroup_memory_bytes")]
-        proportionalMemoryResident,
+        [TypeValue("MB")]
+        ResidentMemory,
         [QueryValue("namedprocess_namegroup_read_bytes_total")]
-        readBytes
+        ReadBytes
     }
 }

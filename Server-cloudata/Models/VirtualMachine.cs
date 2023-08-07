@@ -7,7 +7,6 @@ using MongoDB.Bson.Serialization.Options;
 using Server_cloudata.Enums;
 
 namespace Server_cloudata.Models
-
 {
     public class VirtualMachine
     {

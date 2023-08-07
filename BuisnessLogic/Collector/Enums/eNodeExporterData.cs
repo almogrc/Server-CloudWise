@@ -27,11 +27,11 @@ namespace BuisnessLogic.Collector.Enums
         [TypeValue("GB")]
         [Alert]
         RamUsage,
-        [TypeValue("Byte")]
+        [TypeValue("kb/s")]
         [QueryValue("node_network_receive_bytes_total")]
         [Alert]
         NetworkRecBytes,
-        [TypeValue("Byte")]
+        [TypeValue("kb/s")]
         [QueryValue("node_network_transmit_bytes_total")]
         [Alert]
         NetworkTransmitBytes,
@@ -41,6 +41,10 @@ namespace BuisnessLogic.Collector.Enums
         CPUUsage,
         [QueryValue("node_memory_MemTotal_bytes")]
         [TypeValue("GB")]
-        Ram
+        Ram,
+        [TypeValue("%")]
+        CPUBusy,
+        [QueryValue("node_cpu_seconds_total")]
+        Cores
     }
 }

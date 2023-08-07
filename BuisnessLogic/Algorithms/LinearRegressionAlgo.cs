@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MathNet.Numerics;
 using System.Xml.Linq;
 using MathNet.Numerics.LinearRegression;
+using BuisnessLogic.Model;
 
 namespace BuisnessLogic.Algorithms
 {
@@ -16,11 +17,12 @@ namespace BuisnessLogic.Algorithms
         public double Slope { get; private set; }
         public double Intercept { get; private set; }
         
-        public void Predict()
+        public async Task<List<float>> Predict(List<DataPoint> _data) // todo 
         { 
             (double a, double b) res = Fit.Line(independentVariable.ToArray(), dependentVariable.ToArray());
             Intercept = res.a;
             Slope = res.b;
+            return new List<float>();
         }
     }
 }
