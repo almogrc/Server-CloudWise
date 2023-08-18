@@ -28,7 +28,7 @@ namespace Server_cloudata.Controllers
         }
 
         [HttpPost("AddVM")]
-        public async Task<IActionResult> AddMachine([FromBody] VirtualMachine newMachine)
+        public async Task<IActionResult> AddMachine([FromBody] NewMachineDTO newMachine)
         {
             var customer = await _customersService.GetAsyncByEmail(_contextAccessor.HttpContext.Session.GetString(_contextAccessor.HttpContext.Session.Id));
 
@@ -46,10 +46,10 @@ namespace Server_cloudata.Controllers
             {
                 return BadRequest("A machine with the same Name already exists.");
             }
-
+            
             //TODO: check machine connection status
 
-            customer.VMs.Add(newMachine);
+            customer.VMs.Add(new VirtualMachine() {Name = newMachine.Name, Supplier = newMachine.Supplier.ToString(), Address = newMachine.DNSAddress });
 
             await _customersService.AddVMAsync(customer);
 
