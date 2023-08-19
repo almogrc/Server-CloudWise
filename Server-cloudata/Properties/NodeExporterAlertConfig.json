@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "CPUUsage",
+    "Warning": 80,
+    "Danger": 90
+  },
+  {
+    "Name": "RamUsage",
+    "Warning": 80,
+    "Danger": 90
+  }
+]

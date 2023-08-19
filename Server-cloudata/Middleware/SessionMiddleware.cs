@@ -59,8 +59,8 @@ namespace Server_cloudata.Middleware
         private bool RequestToLoginOrRegister(HttpContext context)
         {
             string url = context.Request.Path;
-            url.ToLower();
-            if (url.Contains("login") || url.Contains("signUp"))
+            url = url.ToLower();
+            if (url.Contains("login") || url.Contains("signup"))
             {
                 return true;
             }

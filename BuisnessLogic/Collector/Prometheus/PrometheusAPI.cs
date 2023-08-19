@@ -9,7 +9,7 @@ namespace BuisnessLogic.Collector.Prometheus
 {
     public class PrometheusAPI
     {
-        public string URLBase => $"http://localhost:{Port}{Api}";
+        public string URLBase => $"http://cloudwiseprod.westeurope.cloudapp.azure.com:{Port}{Api}";
         public string Api => @"/api/v1";
         public readonly string Port = "9090";
         public string QueryRange => @"/query_range";

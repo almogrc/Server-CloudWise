@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Server_cloudata.DTO;
 using Server_cloudata.Models;
+using Server_cloudata.ServerDataManager;
 using Server_cloudata.Services;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace Server_cloudata.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ConnectionController : Controller
+    public class ConnectionController : ControllerBase
     {
         private readonly CustomersService _customersService;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -83,17 +85,17 @@ namespace Server_cloudata.Controllers
 
                 if (existingUser != null)
                 {
-                    return Conflict("User already exists");
+                    return Conflict(ServerUtils.ResultJson("User already exists"));
                 }
 
                 await _customersService.CreateAsync(signUpBody);
-
-                return Ok("User signed up successfully");
+                
+                return Ok(ServerUtils.ResultJson("User signed up successfully"));
             }
             catch (Exception ex)
             {
                 // Handle any server exceptions or business logic errors
-                return Conflict(ex.Message);
+                return Conflict(ServerUtils.ResultJson(ex.Message));
             }
         }
     }
