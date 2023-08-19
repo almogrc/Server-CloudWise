@@ -50,7 +50,7 @@ namespace Server_cloudata.Controllers
             var newMachine = new VirtualMachine
             {
                 Name = newMachineDTO.Name,
-                Supplier = newMachineDTO.Supplier,
+                Supplier = newMachineDTO.Supplier.ToString(),
                 Address = newMachineDTO.Address,
                 Thresholds = new Dictionary<eNodeExporterData, double>(),
                 Alerts = new List<Alert>()
