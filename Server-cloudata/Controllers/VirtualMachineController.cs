@@ -28,7 +28,7 @@ namespace Server_cloudata.Controllers
         }
 
         [HttpPost("AddVM")]
-        public async Task<IActionResult> AddMachine([FromBody] VirtualMachine newMachine)
+        public async Task<IActionResult> AddMachine([FromBody] VirtualMachineDTO newMachineDTO)
         {
             var customer = await _customersService.GetAsyncByEmail(_contextAccessor.HttpContext.Session.GetString(_contextAccessor.HttpContext.Session.Id));
 
@@ -42,10 +42,19 @@ namespace Server_cloudata.Controllers
                 customer.VMs = new List<VirtualMachine>();
             }
 
-            if (customer.VMs.Any(vm => vm.Name == newMachine.Name))
+            if (customer.VMs.Any(vm => vm.Name == newMachineDTO.Name))
             {
                 return BadRequest("A machine with the same Name already exists.");
             }
+
+            var newMachine = new VirtualMachine
+            {
+                Name = newMachineDTO.Name,
+                Supplier = newMachineDTO.Supplier.ToString(),
+                Address = newMachineDTO.Address,
+                Thresholds = new Dictionary<eNodeExporterData, double>(),
+                Alerts = new List<Alert>()
+            };
 
             //TODO: check machine connection status
 
@@ -58,8 +67,9 @@ namespace Server_cloudata.Controllers
             return Ok();
         }
 
+
         [HttpPost("RemoveVM")]
-        public async Task<IActionResult> RemoveMachine([FromBody] VirtualMachine machineToRemove)
+        public async Task<IActionResult> RemoveMachine([FromBody] VirtualMachineDTO machineToRemove)
         {
             var customer = await _customersService.GetAsyncByEmail(_contextAccessor.HttpContext.Session.GetString(_contextAccessor.HttpContext.Session.Id));
 

@@ -60,7 +60,7 @@ namespace Server_cloudata.Middleware
         {
             string url = context.Request.Path;
             url.ToLower();
-            if (url.Contains("login") || url.Contains("signup"))
+            if (url.Contains("login") || url.Contains("signUp"))
             {
                 return true;
             }
