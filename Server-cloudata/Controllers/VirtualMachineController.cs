@@ -99,13 +99,13 @@ namespace Server_cloudata.Controllers
             return Ok(virtualMachines);
         }
 
-        private Dictionary<eNodeExporterData, ThresholdDTO> GetDefualtMachineThreshold()
+        private Dictionary<eNodeExporterData, Threshold> GetDefualtMachineThreshold()
         {
             string filePath = "properties/NodeExporterAlertConfig.json";
 
             try
             {
-                var result = new Dictionary<eNodeExporterData, ThresholdDTO>();
+                var result = new Dictionary<eNodeExporterData, Threshold>();
                 string jsonContent = System.IO.File.ReadAllText(filePath);
                 List<ThresholdDTO>  thresholdDTO = JsonConvert.DeserializeObject<List<ThresholdDTO>>(jsonContent);
                 thresholdDTO.ForEach(threshold =>
@@ -115,7 +115,7 @@ namespace Server_cloudata.Controllers
                     {
                         throw new Exception("cant parse");
                     }
-                    result.Add(value, threshold);
+                    result.Add(value, new Threshold { Danger = threshold.Danger, Warning = threshold.Warning});
                 });
                 return result;
             }
