@@ -29,11 +29,11 @@ namespace BuisnessLogic.Collector.Enums
         RamUsage,
         [TypeValue("kb/s")]
         [QueryValue("node_network_receive_bytes_total")]
-        [Alert]
+        //[Alert]
         NetworkRecBytes,
         [TypeValue("kb/s")]
         [QueryValue("node_network_transmit_bytes_total")]
-        [Alert]
+        //[Alert]
         NetworkTransmitBytes,
         [QueryValue("node_cpu_seconds_total")]
         [TypeValue("%")]
@@ -45,6 +45,9 @@ namespace BuisnessLogic.Collector.Enums
         [TypeValue("%")]
         CPUBusy,
         [QueryValue("node_cpu_seconds_total")]
-        Cores
+        Cores,
+        [Alert]
+        [QueryValue("targets?state=active")]
+        Status
     }
 }

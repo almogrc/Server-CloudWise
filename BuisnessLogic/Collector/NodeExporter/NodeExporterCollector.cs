@@ -65,6 +65,9 @@ namespace BuisnessLogic.Collector.NodeExporter
                 case eNodeExporterData.Cores:
                     url = _prometheusAPI.BuildUrlQueryRange($"count({AddInstanceToUrl(eNodeExporter)}) by (cpu)", DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
                     break;
+                case eNodeExporterData.Status:
+                    url = new Uri($"{_prometheusAPI.URLBase}/{eNodeExporterData.Status.GetQueryValue()}");
+                    break;
                 default:
                     throw new Exception("not valid type");
             }

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "ResidentMemory",
+    "warning": 50,
+    "danger": 60
+  },
+  {
+    "name": "CpuUser",
+    "warning": 50,
+    "danger": 60
+  },
+  {
+    "name": "CpuSystem",
+    "warning": 50,
+    "danger": 60
+  }
+]

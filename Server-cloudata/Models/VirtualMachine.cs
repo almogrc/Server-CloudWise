@@ -4,6 +4,7 @@ using BuisnessLogic.Collector.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
+using Server_cloudata.DTO;
 using Server_cloudata.Enums;
 
 namespace Server_cloudata.Models
@@ -14,7 +15,7 @@ namespace Server_cloudata.Models
         public string Supplier { get; set; }
         public string Address { get; set; }
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
-        public Dictionary<eNodeExporterData,double> Thresholds { get; set; }
+        public Dictionary<eNodeExporterData, ThresholdDTO> Thresholds { get; set; } // should fix database and return it and in the alert to threshold class
         public List<Alert> Alerts { get; set; }
     }
 }

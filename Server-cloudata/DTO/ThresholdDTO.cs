@@ -1,17 +1,11 @@
 ﻿using BuisnessLogic.Collector.Enums;
+using Server_cloudata.Models;
 using System.Text.Json.Serialization;
 
 namespace Server_cloudata.DTO
 {
-    public class ThresholdDTO
+    public class ThresholdDTO : Threshold
     {
-        public class ThresholdRequest
-        {
-            public string MachineName { get; set; }
-
-            [JsonConverter(typeof(JsonStringEnumConverter))]
-            public eNodeExporterData Key { get; set; }
-            public double Value { get; set; }
-        }
+        public string Name { get; set; } 
     }
 }

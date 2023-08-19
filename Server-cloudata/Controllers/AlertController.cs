@@ -33,40 +33,40 @@ namespace Server_cloudata.Controllers
         }
 
         
-        [HttpPost("AddThreshold")]
-        public async Task<IActionResult> AddThresholdToVM([FromBody] ThresholdRequest request)
-        {
-            var customer = await _customersService.GetAsyncByEmail(_contextAccessor.HttpContext.Session.GetString(_contextAccessor.HttpContext.Session.Id));
-            if (customer == null)
-            {
-                return NotFound();
-            }
+        //[HttpPost("AddThreshold")]
+        //public async Task<IActionResult> AddThresholdToVM([FromBody] ThresholdRequest request)
+        //{
+        //    var customer = await _customersService.GetAsyncByEmail(_contextAccessor.HttpContext.Session.GetString(_contextAccessor.HttpContext.Session.Id));
+        //    if (customer == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var virtualMachine = customer.VMs.FirstOrDefault(vm => vm.Name == request.MachineName);
-            if (virtualMachine == null)
-            {
-                return NotFound("Machine with the given name not found.");
-            }
+        //    var virtualMachine = customer.VMs.FirstOrDefault(vm => vm.Name == request.MachineName);
+        //    if (virtualMachine == null)
+        //    {
+        //        return NotFound("Machine with the given name not found.");
+        //    }
 
-            if (virtualMachine.Thresholds == null)
-            {
-                virtualMachine.Thresholds = new Dictionary<eNodeExporterData, double>();
-            }
+        //    if (virtualMachine.Thresholds == null)
+        //    {
+        //        virtualMachine.Thresholds = new Dictionary<eNodeExporterData, double>();
+        //    }
 
-            if (virtualMachine.Thresholds.ContainsKey(request.Key))
-            {
-                virtualMachine.Thresholds[request.Key] = request.Value;
-            }
-            else
-            {
-                virtualMachine.Thresholds.Add(request.Key, request.Value);
-            }
+        //    if (virtualMachine.Thresholds.ContainsKey(request.Key))
+        //    {
+        //        virtualMachine.Thresholds[request.Key] = request.Value;
+        //    }
+        //    else
+        //    {
+        //        virtualMachine.Thresholds.Add(request.Key, request.Value);
+        //    }
 
-            await _customersService.UpdateVMAsync(customer);
+        //    await _customersService.UpdateVMAsync(customer);
 
-            await _alertsService.UpdateOrCreateAlertManager(customer.Email, request.MachineName);
+        //    await _alertsService.UpdateOrCreateAlertManager(customer.Email, request.MachineName);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
     }
 }
