@@ -62,14 +62,23 @@ namespace Server_cloudata.Controllers
 
 
         [HttpPost("signUp")]
-        public async Task<IActionResult> SignUpAsync([FromBody] Customer signUpBody)
+        public async Task<IActionResult> SignUpAsync([FromBody] CustomerDTO signUpBodyDTO)
         {
             try
             {
+                var signUpBody = new Customer
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    Name = signUpBodyDTO.Name,
+                    Email = signUpBodyDTO.Email,
+                    Password = signUpBodyDTO.Password,
+                    VMs = new List<VirtualMachine>()
+                };
+
                 var filter = Builders<Customer>.Filter.Or(
-                    Builders<Customer>.Filter.Eq("id", signUpBody.Id),
                     Builders<Customer>.Filter.Eq("email", signUpBody.Email)
                 );
+
                 var existingUser = _customersService._customersCollection.Find(filter).FirstOrDefault();
 
                 if (existingUser != null)
