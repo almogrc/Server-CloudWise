@@ -119,7 +119,7 @@ namespace Server_cloudata.Models
                                 {
                                     await SendAlertEmail(alert, customer.Name);
                                     _virtualMachine.Alerts.Add(alert);
-
+                                    //update database
                                     var existingVM = customer.VMs.FirstOrDefault(vm => vm.Name == _virtualMachine.Name);
                                     if (existingVM != null)
                                     {
