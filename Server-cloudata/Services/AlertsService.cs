@@ -1,9 +1,12 @@
-﻿using BuisnessLogic.Collector.Builder;
+﻿using BuisnessLogic.Collector;
+using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.Enums;
 using BuisnessLogic.Collector.NodeExporter;
 using BuisnessLogic.Model;
 using Microsoft.AspNetCore.Http;
+using Server_cloudata.DTO;
 using Server_cloudata.Models;
+using Server_cloudata.ServerDataManager;
 using Server_cloudata.Services.Collector;
 using System;
 using System.Collections.Generic;
@@ -17,13 +20,15 @@ namespace Server_cloudata.Services
     public class AlertsService // singleton
     {
         private CustomersService _customersService;
+        private ICollector<eNodeExporterData> _nodeCollector;
         private Dictionary<string, AlertManager> _userIdToAlertManager;
         private Timer _timer;
 
-        public AlertsService(CustomersService customersService) 
+        public AlertsService(CustomersService customersService, ICollector<eNodeExporterData> nodeCollector) 
         {
             _userIdToAlertManager = new Dictionary<string, AlertManager>();
-            _customersService = customersService;      
+            _customersService = customersService;
+            _nodeCollector = nodeCollector;
         }
         public void StartAlertRefresher()
         {
