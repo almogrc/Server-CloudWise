@@ -23,6 +23,7 @@ using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.ProcessExporter;
 using Server_cloudata.Services.Predict;
 using BuisnessLogic.Algorithms;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Server_cloudata
 {
@@ -63,6 +64,18 @@ namespace Server_cloudata
                     .AllowAnyMethod()
                     .AllowCredentials(); // Allow credentials (cookies)
                 });
+            });
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                // Do not set Secure attribute since your app is running on HTTP
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDistributedMemoryCache();
