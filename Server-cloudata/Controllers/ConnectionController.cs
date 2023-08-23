@@ -41,7 +41,7 @@ namespace Server_cloudata.Controllers
 
                 if (customer == null)
                 {
-                    return NotFound("Email not found.");
+                    return NotFound(ServerUtils.ResultJson("Email not found."));
                 }
 
                 if (customer.Password == loginBody.Password)
@@ -52,13 +52,13 @@ namespace Server_cloudata.Controllers
                 }
                 else
                 {
-                    return Unauthorized("Incorrect password.");
+                    return Unauthorized(ServerUtils.ResultJson("Incorrect password."));
                 }
             }
             catch (Exception ex)
             {
                 // Handle server exceptions and business logic errors
-                return StatusCode(500, ex.Message);
+                return Conflict(ServerUtils.ResultJson(ex.Message));
             }
         }
 

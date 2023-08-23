@@ -83,7 +83,6 @@ namespace Server_cloudata.Models
 
                     foreach (var dataPoint in metric.DataPoints)
                     {
-                        //if (dataPoint.Value > 0.9)
                         if (dataPoint.Value > _virtualMachine.Thresholds[thresholdKey].Warning || dataPoint.Value > _virtualMachine.Thresholds[thresholdKey].Danger)
                         {
                             Alert alert = new Alert

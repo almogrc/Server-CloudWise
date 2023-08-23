@@ -53,6 +53,31 @@ namespace Server_cloudata.ServerDataManager
             return virtualMachinesDTO.Values.ToList();
 
         }
+
+        public static async Task<bool> CheckVMStatus(VirtualMachine virtualMachine, string machinesPrometheusJson)
+        {
+            var json = JsonConvert.DeserializeObject<dynamic>(machinesPrometheusJson);
+            json = json["data"];
+            json = json["activeTargets"];
+
+            foreach (var target in json)
+            {
+                if (target["scrapeUrl"].ToString().Contains(virtualMachine.Address))
+                {
+                    if (target["health"] == "up")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return false; // If not found, I consider it as not connected
+        }
+
         // public Dictionary<string, HttpSessionState>
         // private Dictionary<string, > _
     }
