@@ -48,7 +48,7 @@ namespace Server_cloudata.Controllers
                 if (customer.Password == loginBody.Password)
                 {
                     Response.Cookies.Append(ServerDataManager.ServerUtils.SessionCookie, _contextAccessor.HttpContext.Session.Id,
-                        new CookieOptions() { Secure = true, HttpOnly = true, SameSite = SameSiteMode.None});
+                        new CookieOptions() { Secure = true, HttpOnly = false, SameSite = SameSiteMode.None, IsEssential = true});
                     _contextAccessor.HttpContext.Session.SetString(_contextAccessor.HttpContext.Session.Id, loginBody.Email);
                     return Ok(new { name = customer.Name });
                 }

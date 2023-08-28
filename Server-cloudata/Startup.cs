@@ -54,6 +54,7 @@ namespace Server_cloudata
             services.AddTransient<IPredicteService, PredictService>();
             services.AddTransient<SSATimeSeriesForecating>();
             services.AddTransient<ArimaTimeSeriesForecasting>();
+            services.AddTransient<ThresholdsCollector>();
             services.AddLogging();
             services.AddCors(options =>
             {
@@ -65,23 +66,15 @@ namespace Server_cloudata
                     .AllowCredentials(); // Allow credentials (cookies)
                 });
             });
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
-            {
-                options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-                // Do not set Secure attribute since your app is running on HTTP
-            });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(180);
+                options.Cookie.HttpOnly = false;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
         }
 

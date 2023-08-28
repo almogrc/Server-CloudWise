@@ -21,15 +21,14 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class NodeExporterController : ControllerBase
     {
-        public NodeExporterController(INodeCollectorService<Metric> collector, ICollector<eNodeExporterData> collectorNodeExporter, IHttpContextAccessor httpContextAccessor)
+        public NodeExporterController(INodeCollectorService<Metric> collector, IHttpContextAccessor httpContextAccessor, ThresholdsCollector thresholdsCollector)
         {
             _collector = collector;
             _httpContextAccessor = httpContextAccessor;
-            _collectorNodeExporter = collectorNodeExporter;
+            _thresholdsCollector = thresholdsCollector;
         }
 
         private INodeCollectorService<Metric> _collector;
-        ICollector<eNodeExporterData> _collectorNodeExporter;
         private const string network = "Network";
         private const string ramUsage = "RamUsage";
         private const string networkRecBytes = "NetworkRecBytes";
@@ -40,12 +39,13 @@ namespace Server_cloudata.Controllers
         private const string ram = "Ram"; // value
         private const string cores = "Cores"; // value
         private IHttpContextAccessor _httpContextAccessor;
+        private ThresholdsCollector _thresholdsCollector;
 
 
         [HttpPost(ramUsage)]
         public async Task<IActionResult> RamUsage([FromBody] QueriesInfo queriesInfo)
         {
-            return Ok(await _collector.GetData(ramUsage, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
+            return Ok(await _thresholdsCollector.AddThresholsToMetric(await _collector.GetData(ramUsage, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]), Request.Headers[ServerUtils.MachineId]));
         }
         [HttpPost(networkRecBytes)]
         public async Task<IActionResult> NetworkRecive([FromBody] QueriesInfo queriesInfo)
@@ -67,7 +67,7 @@ namespace Server_cloudata.Controllers
         [HttpPost(cpuUsage)]
         public async Task<IActionResult> CpuUsage([FromBody] QueriesInfo queriesInfo)
         {
-            return Ok(await _collector.GetData(cpuUsage, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId]));
+            return Ok(await _thresholdsCollector.AddThresholsToMetric((await _collector.GetData(cpuUsage, queriesInfo.from, queriesInfo.to, Request.Headers[ServerUtils.MachineId])), Request.Headers[ServerUtils.MachineId]));
         }
         [HttpGet(cpuGauge)]
         public async Task<IActionResult> CpuGauge()

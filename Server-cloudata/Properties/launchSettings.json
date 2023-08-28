@@ -14,7 +14,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "https://cloudwiseprod.westeurope.cloudapp.azure.com:5001;http://cloudwiseprod.westeurope.cloudapp.azure.com:5000"
+      "applicationUrl": "http://cloudwiseprod.westeurope.cloudapp.azure.com:5001;http://cloudwiseprod.westeurope.cloudapp.azure.com:5000"
     },
     "WSL": {
       "commandName": "WSL",

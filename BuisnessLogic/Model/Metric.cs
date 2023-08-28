@@ -24,7 +24,8 @@ namespace BuisnessLogic.Model
         public DateTime From { get; }
         public DateTime To { get; }
         public string DataType { get; }
-        public string Type { get; } 
-
+        public string Type { get; }
+    
+        
     }
 }

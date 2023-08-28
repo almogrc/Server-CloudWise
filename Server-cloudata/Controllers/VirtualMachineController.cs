@@ -1,4 +1,5 @@
-﻿using BuisnessLogic.Collector;
+﻿using Amazon.Runtime.Internal.Transform;
+using BuisnessLogic.Collector;
 using BuisnessLogic.Collector.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,7 @@ namespace Server_cloudata.Controllers
                 Name = newMachineDTO.Name,
                 Supplier = newMachineDTO.Supplier.ToString(),
                 Address = newMachineDTO.DNSAddress,
-                Thresholds = GetDefualtMachineThreshold(), // we need to get the defualt data
+                Thresholds = GetDefualtThreshold(), // we need to get the defualt data
                 Alerts = new List<Alert>()
             };
 
@@ -99,6 +100,31 @@ namespace Server_cloudata.Controllers
             return Ok(virtualMachines);
         }
 
+        private Dictionary<string, Threshold> GetDefualtThreshold()
+        {
+            string filePath = "properties/NodeExporterAlertConfig.json";
+
+            try
+            {
+                var result = new Dictionary<string, Threshold>();
+                string jsonContent = System.IO.File.ReadAllText(filePath);
+                List<ThresholdDTO> thresholdDTO = JsonConvert.DeserializeObject<List<ThresholdDTO>>(jsonContent);
+                thresholdDTO.ForEach(threshold =>
+                {
+                    result.Add(threshold.Name, new Threshold { Critical = threshold.Critical, Warning = threshold.Warning });
+                });
+                return result;
+            }
+            catch (FileNotFoundException e)
+            {
+                throw e;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
         private Dictionary<eNodeExporterData, Threshold> GetDefualtMachineThreshold()
         {
             string filePath = "properties/NodeExporterAlertConfig.json";
@@ -115,7 +141,7 @@ namespace Server_cloudata.Controllers
                     {
                         throw new Exception("cant parse");
                     }
-                    result.Add(value, new Threshold { Danger = threshold.Danger, Warning = threshold.Warning});
+                    result.Add(value, new Threshold { Critical = threshold.Critical, Warning = threshold.Warning});
                 });
                 return result;
             }
