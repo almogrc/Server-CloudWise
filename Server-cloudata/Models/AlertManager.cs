@@ -54,16 +54,18 @@ public class AlertManager
     {
         private CustomersService _customersService;
         private INodeCollectorService<Metric> _nodeCollector;
+        private ICollector<eNodeExporterData> _collector;
         private ThresholdsCollector _thresholdsCollector;
         private VirtualMachine _virtualMachine;
         private Timer _timer;
         private string _customerEmail;
 
-        public ThresholdRefresher(CustomersService customersService, VirtualMachine virtualMachine, string customerEmail, INodeCollectorService<Metric> collector, ThresholdsCollector thresholdsCollector)
+        public ThresholdRefresher(CustomersService customersService, VirtualMachine virtualMachine, string customerEmail, INodeCollectorService<Metric> nodeCollector, ThresholdsCollector thresholdsCollector)
         {
             _customersService = customersService;
             _virtualMachine = virtualMachine;
-            _nodeCollector = collector;
+            _nodeCollector = nodeCollector;
+            _collector = new NodeExporterCollector();
             _thresholdsCollector = thresholdsCollector;
             _timer = new Timer(Start, null, TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
             _customerEmail = customerEmail;
@@ -76,7 +78,6 @@ public class AlertManager
                 _virtualMachine = _customersService._customersCollection.Find(customer => customer.Email == _customerEmail).Single().VMs.Find(vm => vm.Name == _virtualMachine.Name);
                 List<eNodeExporterData> allEnumValues = new List<eNodeExporterData>((eNodeExporterData[])Enum.GetValues(typeof(eNodeExporterData)));
                 List<eNodeExporterData> nodeExporterValues = allEnumValues.Where(e => e.HasAttribute<AlertAttribute>()).ToList();
-
                 foreach (var thresholdKey in _virtualMachine.ThresholdsNode.Keys)
                 {
                     if (!nodeExporterValues.Contains(thresholdKey))
@@ -146,7 +147,11 @@ public class AlertManager
                 StopTimer();
             }
         }
-
+        // continue from here
+        private async Task<bool> CheckMachine()
+        {
+            return await ServerUtils.CheckVMStatus(_virtualMachine, await _collector.Collect("Status", ""));
+        }
         private async Task<Metric> UpdateMetricValuesToPrecents(Metric metric, eNodeExporterData thresholdKey)
         {
             if (thresholdKey == eNodeExporterData.RamUsage)
