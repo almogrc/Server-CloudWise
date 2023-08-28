@@ -21,18 +21,20 @@ namespace Server_cloudata.Controllers
     [ApiController]
     public class NodePredictController : Controller
     {
-        public NodePredictController(IPredicteService predictService, SSATimeSeriesForecating ssaAlgo, ArimaTimeSeriesForecasting arimaAlgo, IHttpContextAccessor httpContextAccessor)
+        public NodePredictController(IPredicteService predictService, SSATimeSeriesForecating ssaAlgo, ArimaTimeSeriesForecasting arimaAlgo, IHttpContextAccessor httpContextAccessor, ThresholdsCollector thresholdsCollector)
         {
             _predictService = predictService;
             _ssaAlgo = ssaAlgo;
             _arimaAlgo = arimaAlgo;
             _httpContextAccessor = httpContextAccessor;
+            _thresholdsCollector = thresholdsCollector;
         }
 
         private IPredicteService _predictService;
         private SSATimeSeriesForecating _ssaAlgo;
         private ArimaTimeSeriesForecasting _arimaAlgo;
         private IHttpContextAccessor _httpContextAccessor;
+        private ThresholdsCollector _thresholdsCollector;
 
         private const string network = "Network";
         private const string ramUsage = "RamUsage";
@@ -44,12 +46,12 @@ namespace Server_cloudata.Controllers
         [HttpPost(cpuUsage)]
         public async Task<IActionResult> CPUUsage([FromBody] QueriesInfo queriesInfo)
         {
-            return Ok(await _predictService.GetPredictResult(eNodeExporterData.CPUUsage, Request.Headers[ServerUtils.MachineId], _ssaAlgo));
+            return Ok(await _thresholdsCollector.AddThresholsToMetric((await _predictService.GetPredictResult(eNodeExporterData.CPUUsage, Request.Headers[ServerUtils.MachineId], _ssaAlgo)), Request.Headers[ServerUtils.MachineId]));
         }
         [HttpPost(ramUsage)]
         public async Task<IActionResult> RamUsage([FromBody] QueriesInfo queriesInfo)
         {
-            return Ok(await _predictService.GetPredictResult(eNodeExporterData.RamUsage, Request.Headers[ServerUtils.MachineId], _ssaAlgo));
+            return Ok(await _thresholdsCollector.AddThresholsToMetric((await _predictService.GetPredictResult(eNodeExporterData.RamUsage, Request.Headers[ServerUtils.MachineId], _ssaAlgo)), Request.Headers[ServerUtils.MachineId]));
         }
         [HttpPost(network)]
         public async Task<IActionResult> Network([FromBody] QueriesInfo queriesInfo)

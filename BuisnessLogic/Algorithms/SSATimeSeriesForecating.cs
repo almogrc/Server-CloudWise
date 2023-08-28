@@ -26,10 +26,10 @@ namespace BuisnessLogic.Algorithms
                 var pipline = context.Forecasting.ForecastBySsa(
                     "Forecast",
                     "Value",
-                    windowSize: (int)(100),
+                    windowSize: (int)(50),
                     seriesLength: (int)(data.Count),
                     trainSize: (int)(data.Count * 0.7),
-                    horizon: (int)(data.Count * 0.2));
+                    horizon: (int)(data.Count * 0.15));
                 var model = pipline.Fit(dataView);
                 using (var forcastingEngine = model.CreateTimeSeriesEngine<DataPoint, DataPointForcast>(context))
                 {

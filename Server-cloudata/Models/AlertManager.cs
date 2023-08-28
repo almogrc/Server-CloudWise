@@ -70,110 +70,110 @@ public class AlertManager
             List<eNodeExporterData> allEnumValues = new List<eNodeExporterData>((eNodeExporterData[])Enum.GetValues(typeof(eNodeExporterData)));
             List<eNodeExporterData> nodeExporterValues = allEnumValues.Where(e => e.HasAttribute<AlertAttribute>()).ToList();
 
-           // foreach (var thresholdKey in _virtualMachine.ThresholdsNode.Keys)
-           // {
-           //     if (!nodeExporterValues.Contains(thresholdKey))
-           //     {
-           //         continue;
-           //     }
-           //
-           //     DateTime from = DateTime.UtcNow.AddMinutes(-3);
-           //     DateTime to = DateTime.UtcNow;
-           //     Metric metric = await _nodeCollector.GetData(thresholdKey.ToString(), from, to, _virtualMachine.Address);
-           //     //metric = await UpdateMetricValuesToPrecents(metric, thresholdKey);
+            foreach (var thresholdKey in _virtualMachine.ThresholdsNode.Keys)
+            {
+                if (!nodeExporterValues.Contains(thresholdKey))
+                {
+                    continue;
+                }
+            
+                DateTime from = DateTime.UtcNow.AddMinutes(-3);
+                DateTime to = DateTime.UtcNow;
+                Metric metric = await _nodeCollector.GetData(thresholdKey.ToString(), from, to, _virtualMachine.Address);
+                //metric = await UpdateMetricValuesToPrecents(metric, thresholdKey);
+            
+                foreach (var dataPoint in metric.DataPoints)
+                {
+                    if (dataPoint.Value > _virtualMachine.ThresholdsNode[thresholdKey].Warning || dataPoint.Value > _virtualMachine.ThresholdsNode[thresholdKey].Critical)
+                    {
+                        Alert alert = new Alert
+                        {
+                            VMName = _virtualMachine.Name,
+                            //ThresholdKey = thresholdKey,
+                            CurrentValue = dataPoint.Value,
+                            //Timestamp = dataPoint.Date,
+                            //EmailRecipient = _customerEmail
+                        };
+            
+                        if (dataPoint.Value > _virtualMachine.ThresholdsNode[thresholdKey].Critical)
+                        {
+                            alert.ThresholdValue = _virtualMachine.ThresholdsNode[thresholdKey].Critical;
+                            // alert.AlertType = eAlertType.Danger;
+                        }
+                        else // warning
+                        {
+                            alert.ThresholdValue = _virtualMachine.ThresholdsNode[thresholdKey].Warning;
+                            // alert.AlertType = eAlertType.Warning;
+                        }
+            
+                        if (_virtualMachine.Alerts == null)
+                        {
+                            _virtualMachine.Alerts = new List<Alert>();
+                        }
+            
+                        Customer customer = await _customersService.GetAsyncByEmail(_customerEmail);
+            
+                        if (customer != null)
+                        {
+                            if (NeededToUpdateClient(alert, _virtualMachine.Alerts))
+                            {
+                                await SendAlertEmail(alert, customer.Name);
+                                _virtualMachine.Alerts.Add(alert);
+                                //update database
+                                var existingVM = customer.VMs.FirstOrDefault(vm => vm.Name == _virtualMachine.Name);
+                                if (existingVM != null)
+                                {
+                                    existingVM.Alerts = _virtualMachine.Alerts;
+                                    await _customersService.UpdateVMAsync(customer);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-                //foreach (var dataPoint in metric.DataPoints)
-                //{
-                //    if (dataPoint.Value > _virtualMachine.ThresholdsProcess[thresholdKey].Warning || dataPoint.Value > _virtualMachine.ThresholdsProcess[thresholdKey].Danger)
-                //    {
-                //        Alert alert = new Alert
-                //        {
-                //            VMName = _virtualMachine.Name,
-                //            //ThresholdKey = thresholdKey,
-                //            CurrentValue = dataPoint.Value,
-                //            //Timestamp = dataPoint.Date,
-                //            //EmailRecipient = _customerEmail
-                //        };
-
-                //        if (dataPoint.Value > _virtualMachine.ThresholdsProcess[thresholdKey].Danger)
-                //        {
-                //            alert.ThresholdValue = _virtualMachine.ThresholdsProcess[thresholdKey].Danger;
-                //            // alert.AlertType = eAlertType.Danger;
-                //        }
-                //        else // warning
-                //        {
-                //            alert.ThresholdValue = _virtualMachine.ThresholdsProcess[thresholdKey].Warning;
-                //            // alert.AlertType = eAlertType.Warning;
-                //        }
-
-                //        if (_virtualMachine.Alerts == null)
-                //        {
-                //            _virtualMachine.Alerts = new List<Alert>();
-                //        }
-
-                //        Customer customer = await _customersService.GetAsyncByEmail(_customerEmail);
-
-                //        if (customer != null)
-                //        {
-                //            if (NeededToUpdateClient(alert, _virtualMachine.Alerts))
-                //            {
-                //                await SendAlertEmail(alert, customer.Name);
-                //                _virtualMachine.Alerts.Add(alert);
-                //                //update database
-                //                var existingVM = customer.VMs.FirstOrDefault(vm => vm.Name == _virtualMachine.Name);
-                //                if (existingVM != null)
-                //                {
-                //                    existingVM.Alerts = _virtualMachine.Alerts;
-                //                    await _customersService.UpdateVMAsync(customer);
-                //                }
-                //            }
-                //        }
-                //    }
-               // }
-            //}
-
-           // _timer.Change(TimeSpan.FromMinutes(3), Timeout.InfiniteTimeSpan);
+            _timer.Change(TimeSpan.FromMinutes(3), Timeout.InfiniteTimeSpan);
         }
 
-        //private async Task<Metric> UpdateMetricValuesToPrecents(Metric metric, eNodeExporterData thresholdKey)
-        //{
-        //    if (thresholdKey == eNodeExporterData.RamUsage)
-        //    {
-        //        float ramValue = (await _nodeCollector.GetData(eNodeExporterData.Ram.ToString(), DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow, _virtualMachine.Name)).DataPoints.First().Value;
-        //        foreach (var dataPoint in metric.DataPoints)
-        //        {
-        //            dataPoint.Value = (dataPoint.Value * 100) / ramValue;
-        //        }
-        //    }
-        //    return metric;
-        //}
+        private async Task<Metric> UpdateMetricValuesToPrecents(Metric metric, eNodeExporterData thresholdKey)
+        {
+            if (thresholdKey == eNodeExporterData.RamUsage)
+            {
+                float ramValue = (await _nodeCollector.GetData(eNodeExporterData.Ram.ToString(), DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow, _virtualMachine.Name)).DataPoints.First().Value;
+                foreach (var dataPoint in metric.DataPoints)
+                {
+                    dataPoint.Value = (dataPoint.Value * 100) / ramValue;
+                }
+            }
+            return metric;
+        }
 
         private bool NeededToUpdateClient(Alert newAlert, List<Alert> alerts)
         {
-            //if(alerts.Exists(oldAlert => oldAlert.Timestamp.Date == newAlert.Timestamp.Date && 
-            //oldAlert.ThresholdKey == newAlert.ThresholdKey /*&& oldAlert.AlertType == newAlert.AlertType*/))
-            //{
-            //    return false;
-            //}
+            if (alerts.Exists(oldAlert => oldAlert.StartTime.Date == newAlert.StartTime.Date &&
+            oldAlert.AlertName == newAlert.AlertName/*&& oldAlert.AlertType == newAlert.AlertType*/))
+            {
+                return false;
+            }
             return true;
         }
 
         public void StopTimer()
         {
-            //_timer.Dispose();
+            _timer.Dispose();
         }
 
         private async Task SendAlertEmail(Alert alert, string customerName)
         {
             var client = new SendGridClient("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");
             var from = new EmailAddress("cloudwise04@gmail.com", "CloudWise");
-            // var to = new EmailAddress(alert.EmailRecipient, customerName);
+             var to = new EmailAddress(alert.EmailRecipient, customerName);
             var subject = $"Alert: Threshold exceeded for VM '{alert.VMName}'";
-            //var plainTextContent = $"Threshold '{alert.ThresholdKey}' with value '{alert.ThresholdValue}' was exceeded for VM '{alert.VMName}'. Current value is '{alert.CurrentValue}'.";
-            //var htmlContent = $"<p>Threshold '{alert.ThresholdKey}' with value '{alert.ThresholdValue}' was exceeded for VM '{alert.VMName}'. Current value is '{alert.CurrentValue}'.</p>";
+            var plainTextContent = $"Threshold '{alert.AlertName}' with value '{alert.ThresholdValue}' was exceeded for VM '{alert.VMName}'. Current value is '{alert.CurrentValue}'.";
+            var htmlContent = $"<p>Threshold '{alert.AlertName}' with value '{alert.ThresholdValue}' was exceeded for VM '{alert.VMName}'. Current value is '{alert.CurrentValue}'.</p>";
 
-            // var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            //var response = await client.SendEmailAsync(msg);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
         }
     }
 

@@ -30,7 +30,8 @@ namespace Server_cloudata.Models
         public string Description { get; set; }
         public DateTime StartTime { get; set; }
         public string Severity { get; set; }
-       // public eAlertType AlertType { get; set; }
+        public string EmailRecipient { get; set; }
+        // public eAlertType AlertType { get; set; }
         //public string Description { get; set; }
     }
 }

@@ -56,6 +56,7 @@ namespace Server_cloudata.Controllers
                 Supplier = newMachineDTO.Supplier.ToString(),
                 Address = newMachineDTO.DNSAddress,
                 Thresholds = GetDefualtThreshold(), // we need to get the defualt data
+                ThresholdsNode = GetDefualtMachineThreshold(),
                 Alerts = new List<Alert>()
             };
 
