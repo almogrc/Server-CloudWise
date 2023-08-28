@@ -28,6 +28,11 @@ namespace Server_cloudata.Middleware
             {
                  await _requestDelegate(context);
             }
+            else if(await RequestFromPrometheusClient(context))
+            {
+                await _requestDelegate(context);
+
+            }
             else if (await CheckIfSessionExist(context)) 
             { 
                 await _requestDelegate(context);
@@ -35,10 +40,25 @@ namespace Server_cloudata.Middleware
             else 
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                await context.Response.WriteAsync("{{\"result\":\"login\"}}");
+                await context.Response.WriteAsync("{\"result\":\"login\"}");
                 // Bad request, do not call next middleware.
                 return;
             }
+        }
+
+        private async Task<bool> RequestFromPrometheusClient(HttpContext context)
+        {
+            string url = context.Request.Path;
+            url = url.ToLower();
+            if (url.Contains("alertreciver"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         private async Task<bool> CheckIfSessionExist(HttpContext context)

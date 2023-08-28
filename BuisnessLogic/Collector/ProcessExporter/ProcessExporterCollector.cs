@@ -41,11 +41,11 @@ namespace BuisnessLogic.Collector.ProcessExporter
             {
                 case eProcessExporterData.CpuUser:
                     //to delete
-                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData,$"{nameGroupParam},mode=\"{eCPUMode.user}\""),"30s")}{"/"}{MsInSecond}){IgnoreUnrelevantProcess}", from, to);
+                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData,$"{nameGroupParam},mode=\"{eCPUMode.user}\""),"30s")}{"*"}{MsInSecond}){IgnoreUnrelevantProcess}", from, to);
                     break;
                 case eProcessExporterData.CpuSystem:
                     //to delete
-                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},mode=\"{eCPUMode.system}\""),"30s")}{"/"}{MsInSecond}){IgnoreUnrelevantProcess}", from, to);
+                    url = _prometheusAPI.BuildUrlQueryRange($"({_prometheusAPI.Irate(AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},mode=\"{eCPUMode.system}\""),"30s")}{"*"}{MsInSecond}){IgnoreUnrelevantProcess}", from, to);
                     break;
                 case eProcessExporterData.ResidentMemory:
                     url = _prometheusAPI.BuildUrlQueryRange($"({AddInstanceAnParamsToUrl(ProcessExporterData, $"{nameGroupParam},memtype=\"{eMemoryType.Resident.ToString().ToLower()}\"")}/{MBInBytes}){IgnoreUnrelevantProcess}", from, to);

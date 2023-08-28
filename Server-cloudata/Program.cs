@@ -27,7 +27,7 @@ namespace Server_cloudata
             }
             catch (Exception ex)
             {
-                Logger.Instance.Error(ex.Message + Environment.NewLine + ex.StackTrace);
+                //Logger.Instance.Error(ex.Message + Environment.NewLine + ex.StackTrace);
             }
         }
 

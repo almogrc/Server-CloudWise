@@ -2,11 +2,26 @@
   {
     "Name": "CPUUsage",
     "Warning": 80,
-    "Danger": 90
+    "Critical": 90
   },
   {
     "Name": "RamUsage",
     "Warning": 80,
-    "Danger": 90
+    "Critical": 90
   }
+  //{
+  //  "name": "ResidentMemory_Process",
+  //  "warning": 50,
+  //  "danger": 60
+  //},
+  //{
+  //  "name": "CpuUser_Process",
+  //  "warning": 50,
+  //  "danger": 60
+  //},
+  //{
+  //  "name": "CpuSystem_Process",
+  //  "warning": 50,
+  //  "danger": 60
+  //}
 ]

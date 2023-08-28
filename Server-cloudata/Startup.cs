@@ -23,6 +23,7 @@ using BuisnessLogic.Collector.Builder;
 using BuisnessLogic.Collector.ProcessExporter;
 using Server_cloudata.Services.Predict;
 using BuisnessLogic.Algorithms;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Server_cloudata
 {
@@ -53,6 +54,7 @@ namespace Server_cloudata
             services.AddTransient<IPredicteService, PredictService>();
             services.AddTransient<SSATimeSeriesForecating>();
             services.AddTransient<ArimaTimeSeriesForecasting>();
+            services.AddTransient<ThresholdsCollector>();
             services.AddLogging();
             services.AddCors(options =>
             {
@@ -69,6 +71,10 @@ namespace Server_cloudata
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(180);
+                options.Cookie.HttpOnly = false;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
         }
 

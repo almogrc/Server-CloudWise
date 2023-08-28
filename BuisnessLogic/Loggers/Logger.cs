@@ -3,6 +3,7 @@ namespace BuisnessLogic.Loggers
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace BuisnessLogic.Loggers
 
         private Logger()
         {
-            LogManager.LoadConfiguration("/mnt/c/Development/BuisnessLogic/nlog.config"); 
+            LogManager.LoadConfiguration($@"{Directory.GetCurrentDirectory()}/BuisnessLogic/nlog.config"); 
         }
 
         public void Info(string message)

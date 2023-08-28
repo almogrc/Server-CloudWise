@@ -1,0 +1,68 @@
+﻿HostOutOfMemoryWarning: 80
+HostOutOfMemoryCritical: 90
+HostHighCpuLoadWarning: 80
+HostHighCpuLoadCritical: 90
+Instance: localhost
+
+groups:
+- name: alert.rules
+  rules:
+  - alert: InstanceDown
+   # Condition for alerting
+    expr: up == 0
+    for: 1m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Instance {{ $labels.instance }} down'
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'critical'
+
+  - alert: HostOutOfMemory
+   # Condition for alerting
+    expr: 100 - ((node_memory_MemAvailable{instance="{{$Instance}}"} / node_memory_MemTotal{instance="{{$Instance}}"}) * 100) >= {{$HostOutOfMemoryWarning}}
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host out of memory (instance {{ $labels.instance }})'
+      description: 'Node memory is used more than ( > {{$HostOutOfMemoryWarning}}%)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'warning'
+        
+  - alert: HostOutOfMemory
+   # Condition for alerting
+    expr: 100 - ((node_memory_MemAvailable{instance="{{$Instance}}"} / node_memory_MemTotal{instance="{{$Instance}}"}) * 100) >= {{$HostOutOfMemoryCritical}}
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host out of memory (instance {{ $labels.instance }})'
+      description: 'Node memory is used more than ( > {{$HostOutOfMemoryCritical}}%)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'critical'
+
+  - alert: HostHighCpuLoad
+   # Condition for alerting
+    expr: (sum by (instance) (irate(node_cpu{{instance="{{$Instance}}"},job="node_exporter",mode="idle"}[5m]))) > {{$HostHighCpuLoadWarning}}
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host high CPU load (instance {{ $labels.instance }})'
+      description: 'CPU load is > {{$HostHighCpuLoadWarning}}%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'warning'
+
+  - alert: HostHighCpuLoad
+   # Condition for alerting
+    expr: (sum by (instance) (irate(node_cpu{{instance="{{$Instance}}"},job="node_exporter_metrics",mode="idle"}[5m]))) > {{$HostHighCpuLoadCritical}}
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host high CPU load (instance {{ $labels.instance }})'
+      description: 'CPU load is > {{$HostHighCpuLoadCritical}}%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'critical'

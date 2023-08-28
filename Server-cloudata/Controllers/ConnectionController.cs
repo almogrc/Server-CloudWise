@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace Server_cloudata.Controllers
 {
@@ -46,7 +47,8 @@ namespace Server_cloudata.Controllers
 
                 if (customer.Password == loginBody.Password)
                 {
-                    Response.Cookies.Append(ServerDataManager.ServerUtils.SessionCookie, _contextAccessor.HttpContext.Session.Id);
+                    Response.Cookies.Append(ServerDataManager.ServerUtils.SessionCookie, _contextAccessor.HttpContext.Session.Id,
+                        new CookieOptions() { Secure = true, HttpOnly = false, SameSite = SameSiteMode.None, IsEssential = true});
                     _contextAccessor.HttpContext.Session.SetString(_contextAccessor.HttpContext.Session.Id, loginBody.Email);
                     return Ok(new { name = customer.Name });
                 }

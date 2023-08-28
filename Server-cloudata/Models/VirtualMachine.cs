@@ -15,7 +15,10 @@ namespace Server_cloudata.Models
         public string Supplier { get; set; }
         public string Address { get; set; }
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
-        public Dictionary<eNodeExporterData, Threshold> Thresholds { get; set; } // should fix database and return it and in the alert to threshold class
+        public Dictionary<eNodeExporterData, Threshold> ThresholdsNode { get; set; } // should fix database and return it and in the alert to threshold class
+        //[BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
+        //public Dictionary<eProcessExporterData, Threshold> ThresholdsProcess { get; set; }
+        public Dictionary<string, Threshold> Thresholds { get; set; }
         public List<Alert> Alerts { get; set; }
     }
 }

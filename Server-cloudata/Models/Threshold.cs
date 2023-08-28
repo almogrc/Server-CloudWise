@@ -3,6 +3,6 @@
     public class Threshold
     {
         public int Warning { get; set; }
-        public int Danger { get; set; }
+        public int Critical { get; set; }
     }
 }
