@@ -20,15 +20,17 @@ namespace Server_cloudata.Services
     public class AlertsService // singleton
     {
         private CustomersService _customersService;
-        private ICollector<eNodeExporterData> _nodeCollector;
+        INodeCollectorService<Metric> _collector;
+        ThresholdsCollector _thresholdsCollector;
         private Dictionary<string, AlertManager> _userIdToAlertManager;
         private Timer _timer;
 
-        public AlertsService(CustomersService customersService, ICollector<eNodeExporterData> nodeCollector) 
+        public AlertsService(CustomersService customersService, INodeCollectorService<Metric> collector, ThresholdsCollector thresholdsCollector)
         {
             _userIdToAlertManager = new Dictionary<string, AlertManager>();
             _customersService = customersService;
-            _nodeCollector = nodeCollector;
+            _collector = collector;
+            _thresholdsCollector = thresholdsCollector;
         }
         public void StartAlertRefresher()
         {
@@ -40,7 +42,7 @@ namespace Server_cloudata.Services
             List<Customer> customers = _customersService.GetAsync().Result;
             foreach (Customer customer in customers)
             {
-                foreach(VirtualMachine vm in customer.VMs)
+                foreach (VirtualMachine vm in customer.VMs)
                 {
                     UpdateOrCreateAlertManager(customer.Email, vm.Name);
                 }
@@ -51,9 +53,9 @@ namespace Server_cloudata.Services
         {
             if (!_userIdToAlertManager.ContainsKey(customerEmail))
             {
-               AlertManager alertManager = new AlertManager(_customersService, customerEmail);
-               await alertManager.UpdateOrCreateThresholdRefresher(machineId);
-               _userIdToAlertManager.Add(customerEmail, alertManager);
+                AlertManager alertManager = new AlertManager(_customersService, customerEmail);
+                await alertManager.UpdateOrCreateThresholdRefresher(machineId, _collector, _thresholdsCollector);
+                _userIdToAlertManager.Add(customerEmail, alertManager);
             }
         }
     }
