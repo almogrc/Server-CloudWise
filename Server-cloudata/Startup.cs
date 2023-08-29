@@ -104,7 +104,7 @@ namespace Server_cloudata
                 appBuilder.UseMiddleware<MachineMiddleware>();
             });
             app.UseEndpoints(endpoints => endpoints.MapControllers());
-            //alertService.StartAlertRefresher();
+            alertService.StartAlertRefresher();
         }
     }
 }
