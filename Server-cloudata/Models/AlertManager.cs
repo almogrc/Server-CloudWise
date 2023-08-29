@@ -21,6 +21,7 @@ using System.Runtime.Intrinsics.Arm;
 using Server_cloudata.Models;
 using MongoDB.Driver;
 using Server_cloudata.DTO;
+using Org.BouncyCastle.Asn1.Cms;
 
 //namespace Server_cloudata.Models
 //{
@@ -78,6 +79,12 @@ public class AlertManager
                 _virtualMachine = _customersService._customersCollection.Find(customer => customer.Email == _customerEmail).Single().VMs.Find(vm => vm.Name == _virtualMachine.Name);
                 List<eNodeExporterData> allEnumValues = new List<eNodeExporterData>((eNodeExporterData[])Enum.GetValues(typeof(eNodeExporterData)));
                 List<eNodeExporterData> nodeExporterValues = allEnumValues.Where(e => e.HasAttribute<AlertAttribute>()).ToList();
+
+                if (!await CheckMachine())
+                {
+                   await HandleAlertsWhenMachineIsDown();
+                }
+
                 foreach (var thresholdKey in _virtualMachine.ThresholdsNode.Keys)
                 {
                     if (!nodeExporterValues.Contains(thresholdKey))
@@ -99,8 +106,8 @@ public class AlertManager
                                 VMName = _virtualMachine.Name,
                                 //ThresholdKey = thresholdKey,
                                 CurrentValue = dataPoint.Value,
-                                //Timestamp = dataPoint.Date,
-                                //EmailRecipient = _customerEmail
+                                StartTime = dataPoint.Date,
+                                EmailRecipient = _customerEmail
                             };
 
                             if (dataPoint.Value > metric.Critical)
@@ -147,7 +154,7 @@ public class AlertManager
                 StopTimer();
             }
         }
-        // continue from here
+
         private async Task<bool> CheckMachine()
         {
             return await ServerUtils.CheckVMStatus(_virtualMachine, await _collector.Collect("Status", ""));
@@ -188,6 +195,54 @@ public class AlertManager
             var subject = $"Alert: Threshold exceeded for VM '{alert.VMName}'";
             var plainTextContent = $"Threshold '{alert.AlertName}' with value '{alert.ThresholdValue}' was exceeded for VM '{alert.VMName}'. Current value is '{alert.CurrentValue}'.";
             var htmlContent = $"<p>Threshold '{alert.AlertName}' with value '{alert.ThresholdValue}' was exceeded for VM '{alert.VMName}'. Current value is '{alert.CurrentValue}'.</p>";
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
+        }
+
+        private async Task HandleAlertsWhenMachineIsDown()
+        {
+            Alert alert = new Alert
+            {
+                VMName = _virtualMachine.Name,
+                AlertName = "Machine is down",
+                //ThresholdKey = thresholdKey,
+                //CurrentValue = dataPoint.Value,
+                StartTime = DateTime.Now,
+                EmailRecipient = _customerEmail
+            };
+
+            if (_virtualMachine.Alerts == null)
+            {
+                _virtualMachine.Alerts = new List<Alert>();
+            }
+
+            Customer customer = await _customersService.GetAsyncByEmail(_customerEmail);
+
+            if (customer != null)
+            {
+                if (NeededToUpdateClient(alert, _virtualMachine.Alerts))
+                {
+                    await SendAlertByEmailWhenMachineIsDown(alert, customer.Name);
+                    _virtualMachine.Alerts.Add(alert);
+                    var existingVM = customer.VMs.FirstOrDefault(vm => vm.Name == _virtualMachine.Name);
+                    if (existingVM != null)
+                    {
+                        existingVM.Alerts = _virtualMachine.Alerts;
+                        await _customersService.UpdateVMAsync(customer);
+                    }
+                }
+            }
+        }
+
+        private async Task SendAlertByEmailWhenMachineIsDown(Alert alert, string customerName)
+        {
+            var client = new SendGridClient("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");
+            var from = new EmailAddress("cloudwise04@gmail.com", "CloudWise");
+            var to = new EmailAddress(alert.EmailRecipient, customerName);
+            var subject = alert.VMName;
+            var plainTextContent = $"{alert.AlertName}' Time '{alert.StartTime}'.";
+            var htmlContent = "";
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
