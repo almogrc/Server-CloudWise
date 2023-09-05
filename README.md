@@ -6,7 +6,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/ChenKlausner/ReadmeTemp">
-    <img src="Server-cloudata/Images/CloudWiseLogo.png" alt="Logo" width="350" height="290">
+    <img src="Server-cloudata/Images/CloudWiseLogo.png" alt="Logo" width="190" height="150">
   </a>
   <p align="center">
     Monitoring and Analyzing cloud-based virtual machines.
@@ -191,7 +191,10 @@ Guy Yomtov - [LinkedIn Profile](https://www.linkedin.com/in/guy-yomtov-062324162
 
 Almog Raccah - [LinkedIn Profile](https://www.linkedin.com/in/almog-raccah-6b24171ba/) - almogrc1@gmail.com
 
+Gil Kaneti - gilkn@mta.ac.il
+
 Project Link: [https://github.com/guyyomtov/Server-cloudata](https://github.com/guyyomtov/Server-cloudata)
+              [https://github.com/guyyomtov/Sparc-cloudata](https://github.com/guyyomtov/Sparc-cloudata)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
