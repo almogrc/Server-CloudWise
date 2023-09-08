@@ -60,7 +60,7 @@ namespace Server_cloudata
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:3456") // Replace with your React app's origin
+                    builder.WithOrigins("http://localhost:3456", "https://cloudwise.netlify.app") // Replace with your React app's origin
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials(); // Allow credentials (cookies)
