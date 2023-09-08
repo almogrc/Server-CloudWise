@@ -103,7 +103,7 @@ namespace Server_cloudata.Controllers
 
         private Dictionary<string, Threshold> GetDefualtThreshold()
         {
-            string filePath = "properties/NodeExporterAlertConfig.json";
+            string filePath = "AlertsConfigFiles/NodeExporterAlertConfig.json";
 
             try
             {
@@ -128,7 +128,7 @@ namespace Server_cloudata.Controllers
         }
         private Dictionary<eNodeExporterData, Threshold> GetDefualtMachineThreshold()
         {
-            string filePath = "properties/NodeExporterAlertConfig.json";
+            string filePath = "AlertsConfigFiles/NodeExporterAlertConfig.json";
 
             try
             {
@@ -158,7 +158,7 @@ namespace Server_cloudata.Controllers
         }
         private Dictionary<eProcessExporterData, Threshold> GetDefualtProcessThreshold()
         {
-            string filePath = "properties/ProcessExporterAlertConfig.json"; 
+            string filePath = "AlertsConfigFiles/ProcessExporterAlertConfig.json"; 
 
             try
             {
