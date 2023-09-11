@@ -14,11 +14,7 @@
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    
   </p>
 </div>
 
@@ -37,7 +33,7 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#The-easy-way-to-get-started---just-run-the-following-commands-:">The easy way to get started</a></li>
+        <li><a href="#The-easy-way-to-get-started">The easy way to get started</a></li>
         <li><a href="#installing-and-running-the-node-exporter">Installing and running the Node Exporter</a></li>
         <li><a href="#installing-and-running-the-process-exporter">Installing and running the Process Exporter</a></li>
       </ul>
@@ -83,14 +79,15 @@ These predictions serve to empower users by identifying and addressing potential
 
 Welcome to CloudWise! CloudWise is a monitoring platform that gathers metrics from monitored targets by scraping data from HTTP endpoints on these targets. As you begin your journey, your first step will be to install Node Exporter, which provides a diverse range of hardware and kernel-related metrics. Afterward, you'll proceed to install the Process Exporter, designed to capture process-specific metrics.
 
-### The easy way to get started - just run the following commands : 
+### The easy way to get started
+RUN:
   ```sh
   git clone https://github.com/guyyomtov/cloudwiseinstall.git
   cd cloudwiseinstall
   chmod +x cloudWiseInstall.sh
   ./cloudWiseInstall.sh
   ```
-OR can do it manually - 
+OR you can do it manually - 
 ### Installing and running the Node Exporter
 
 The Prometheus Node Exporter is a single static binary that you can install via tarball. Once you've downloaded it from the [Prometheus downloads page](https://prometheus.io/download/#node_exporter), extract it, and run it:
